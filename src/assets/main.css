@@ -1,0 +1,20 @@
+@import './base.css';
+
+
+.overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+
+  z-index: 998;
+}
+.slide-panel-enter-active,
+.slide-panel-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-panel-enter-from,
+.slide-panel-leave-to {
+  transform: translateX(100%);
+}

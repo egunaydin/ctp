@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-between align-items-center px-3 py-2">
-    <!-- Sol Blok: Hamburger + Search -->
+    <!-- Sidebar -->
     <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 500px;">
       <!-- Mobil Hamburger Butonu -->
       <button class="btn btn-outline-secondary d-md-none" @click="emit('openSidebar')"
@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <!-- Sağ Blok: User Card (Sadece md ve üzeri görünür) -->
+    <!-- User Card (gizle göster) -->
     <div class="bg-white rounded-3 shadow-sm d-none d-md-flex align-items-center px-3 py-2"
       style="min-width: 200px; margin-left: 16px;">
       <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Profile" class="rounded-circle me-2"

@@ -11,7 +11,7 @@
 
           <div class="flex-grow-1 d-flex flex-column ms-3">
             <Topbar />
-            <main class="flex-grow-1 mt-3">
+            <main class="flex-grow-1 mt-0 ">
               <slot />
             </main>
           </div>
@@ -20,7 +20,7 @@
         <!-- Mobil -->
         <div class="d-block d-md-none">
           <Topbar @openSidebar="showMobileMenu = true" />
-          <main class="mt-3">
+          <main class="mt-1">
             <slot />
           </main>
         </div>
@@ -33,9 +33,6 @@
           <!-- Sidebar Panel -->
           <div class="mobile-sidebar-panel">
             <Sidebar :isMenuOpen="showMobileMenu" @closeSidebar="showMobileMenu = false" />
-            <button class="btn btn-light position-absolute top-0 end-0 m-2" @click="showMobileMenu = false">
-              ✕
-            </button>
           </div>
         </div>
 

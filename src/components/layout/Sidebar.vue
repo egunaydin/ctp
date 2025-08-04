@@ -85,7 +85,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Sidebar Bağlantıları */
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -93,7 +92,6 @@ onMounted(() => {
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   font-weight: 500;
-  /* transition: all 0.2s; → KALDIRILDI */
 }
 
 .sidebar-link:hover {
@@ -105,7 +103,6 @@ onMounted(() => {
   color: #0d6efd;
 }
 
-/* Mobil Menü Arka Plan */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -117,11 +114,10 @@ onMounted(() => {
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
-  /* transition: none; → gerek yok, ama istersen ekleyebilirsin */
 }
 
 .mobile-sidebar {
-  background-color: #1c1c1c;
+  background-color: rgba(0, 0, 0, 0.546);
   width: 100%;
   max-width: 320px;
   height: 100%;
@@ -130,14 +126,11 @@ onMounted(() => {
   flex-direction: column;
   overflow-y: auto;
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
-  /* animation: none; → sadece animasyon kullanılmışsa gerekir */
-  /* transition: none; → istersen ekleyebilirsin */
 }
 
 .mobile-sidebar .nav-link {
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  /* transition: background 0.2s; → KALDIRILDI */
 }
 
 .mobile-sidebar .nav-link:hover {

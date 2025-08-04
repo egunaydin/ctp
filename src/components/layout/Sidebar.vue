@@ -7,6 +7,8 @@
              background-blend-mode: overlay;
              background-size: cover;
              border-radius: 0.75rem;">
+
+      <!-- LOGO -->
       <div class="text-uppercase fw-bold fs-6 mb-4">Logistics System</div>
 
       <!-- Menü -->
@@ -28,7 +30,7 @@
         </RouterLink>
       </nav>
 
-      <!-- Kullanıcı Bilgileri -->
+      <!-- Kullanıcı Kutusu -->
       <div class="bg-white bg-opacity-25 rounded-4 text-white text-center p-3 mt-4">
         <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="rounded-circle mb-2"
           style="width: 48px; height: 48px; object-fit: cover;" />
@@ -41,10 +43,13 @@
     <!-- Mobil Menü -->
     <div v-if="isMenuOpen && isMobile" class="mobile-menu-overlay">
       <div class="mobile-sidebar">
-        <button class="btn btn-light align-self-end mb-4" @click="$emit('closeSidebar')">
-          <X class="icon" />
+        <!-- Menü Butonu -->
+        <button class="btn btn-outline-light align-self-start mb-4" @click="$emit('closeSidebar')"
+          style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+          <Menu :size="40" class="text-white" />
         </button>
 
+        <!-- Menü Linkleri -->
         <RouterLink class="nav-link text-white fs-5 mb-3" to="/" @click="$emit('closeSidebar')">🏠 Orders</RouterLink>
         <RouterLink class="nav-link text-white fs-5 mb-3" to="/tracking" @click="$emit('closeSidebar')">📍 Tracking
         </RouterLink>
@@ -62,7 +67,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { LayoutDashboard, Map, FileText, BarChart, Users, X } from 'lucide-vue-next'
+import { LayoutDashboard, Map, FileText, BarChart, Users, Menu } from 'lucide-vue-next'
 
 const props = defineProps<{
   isMenuOpen: boolean
@@ -87,8 +92,8 @@ onMounted(() => {
   color: #fff;
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
-  transition: all 0.2s;
   font-weight: 500;
+  /* transition: all 0.2s; → KALDIRILDI */
 }
 
 .sidebar-link:hover {
@@ -112,6 +117,7 @@ onMounted(() => {
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
+  /* transition: none; → gerek yok, ama istersen ekleyebilirsin */
 }
 
 .mobile-sidebar {
@@ -124,12 +130,14 @@ onMounted(() => {
   flex-direction: column;
   overflow-y: auto;
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+  /* animation: none; → sadece animasyon kullanılmışsa gerekir */
+  /* transition: none; → istersen ekleyebilirsin */
 }
 
 .mobile-sidebar .nav-link {
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  transition: background 0.2s;
+  /* transition: background 0.2s; → KALDIRILDI */
 }
 
 .mobile-sidebar .nav-link:hover {

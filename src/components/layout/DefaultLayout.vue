@@ -26,20 +26,18 @@
         </div>
 
         <!-- Mobil Sidebar -->
-        <transition name="slide-panel">
-          <div v-if="showMobileMenu" class="mobile-sidebar-wrapper">
-            <!-- Overlay -->
-            <div class="mobile-sidebar-overlay" @click="showMobileMenu = false"></div>
+        <div v-if="showMobileMenu" class="mobile-sidebar-wrapper">
+          <!-- Overlay -->
+          <div class="mobile-sidebar-overlay" @click="showMobileMenu = false"></div>
 
-            <!-- Sidebar Panel -->
-            <div class="mobile-sidebar-panel">
-              <Sidebar :isMenuOpen="showMobileMenu" @closeSidebar="showMobileMenu = false" />
-              <button class="btn btn-light position-absolute top-0 end-0 m-2" @click="showMobileMenu = false">
-                ✕
-              </button>
-            </div>
+          <!-- Sidebar Panel -->
+          <div class="mobile-sidebar-panel">
+            <Sidebar :isMenuOpen="showMobileMenu" @closeSidebar="showMobileMenu = false" />
+            <button class="btn btn-light position-absolute top-0 end-0 m-2" @click="showMobileMenu = false">
+              ✕
+            </button>
           </div>
-        </transition>
+        </div>
 
       </div>
     </div>
@@ -59,7 +57,7 @@ const showMobileMenu = ref(false)
   position: fixed;
   top: 0;
   left: 0;
-  width: 240px;
+  width: fit-content;
   height: 100vh;
   background-color: #1c1c1c;
   z-index: 1055;
@@ -68,14 +66,12 @@ const showMobileMenu = ref(false)
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Slide animasyon */
+/* Slide animasyonları kaldırıldı */
 .slide-panel-enter-active,
-.slide-panel-leave-active {
-  transition: transform 0.3s ease;
-}
-
+.slide-panel-leave-active,
 .slide-panel-enter-from,
 .slide-panel-leave-to {
-  transform: translateX(-100%);
+  transition: none !important;
+  transform: none !important;
 }
 </style>

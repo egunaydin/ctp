@@ -1,9 +1,34 @@
 <template>
   <div class="container-fluid py-4">
+    <!-- Filtre Dropdown -->
+    <div class="mb-4 text-start">
+      <div class="dropdown d-inline-block">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+          aria-expanded="false">
+          {{ filter || 'All Statuses' }}
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a class="dropdown-item" :class="{ active: filter === '' }" @click.prevent="setFilter('')">All</a>
+          </li>
+          <li v-for="status in availableStatuses" :key="status">
+            <a class="dropdown-item" :class="{ active: filter === status }" @click.prevent="setFilter(status)">
+              {{ status }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <div class="row gy-4">
-      <div class="col-12 col-md-12 col-xl-6" v-for="shipment in shipments" :key="shipment.id">
+      <div class="col-12 col-md-12 col-xl-6" v-for="shipment in visibleShipments" :key="shipment.id">
         <TrackingCard :shipment="shipment" @click="openDetail(shipment.id)" />
       </div>
+    </div>
+
+    <!-- Load More Butonu -->
+    <div class="text-center mt-4" v-if="visibleCount < filteredShipments.length">
+      <button class="btn btn-outline-secondary" @click="loadMore">Load More</button>
     </div>
 
     <!-- Overlay -->
@@ -17,7 +42,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import {
   ref, computed
@@ -28,17 +52,39 @@ import OrderDetailPanel from "@/components/OrderDetailPanel.vue";
 const panelVisible = ref(false)
 const selectedShipmentId = ref<number | null>(null)
 
+const visibleCount = ref(5)
+const filter = ref('')
+
+const setFilter = (status: string) => {
+  filter.value = status
+  visibleCount.value = 5
+}
+
+const loadMore = () => {
+  visibleCount.value += 5
+}
+
+const availableStatuses = ['Shipping', 'Shipped', 'Planned', 'Canceled', 'Warning']
+
+const filteredShipments = computed(() => {
+  return filter.value
+    ? shipments.filter(s => s.status === filter.value)
+    : shipments
+})
+
+const visibleShipments = computed(() => {
+  return filteredShipments.value.slice(0, visibleCount.value)
+})
+
 const selectedShipment = computed(() => {
   return shipments.find(s => s.id === selectedShipmentId.value) || null
 })
 
 function openDetail(id: number) {
-  console.log('Opening detail for ID:', id)
-  console.trace()
-
   selectedShipmentId.value = id
   panelVisible.value = true
 }
+
 const shipments = [
   {
     id: 1,

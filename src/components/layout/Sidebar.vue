@@ -7,7 +7,6 @@
              background-blend-mode: overlay;
              background-size: cover;
              border-radius: 0.75rem;">
-      <!-- LOGO -->
       <div class="text-uppercase fw-bold fs-6 mb-4">Logistics System</div>
 
       <!-- Menü -->
@@ -29,7 +28,7 @@
         </RouterLink>
       </nav>
 
-      <!-- Kullanıcı Kutusu -->
+      <!-- Kullanıcı Bilgileri -->
       <div class="bg-white bg-opacity-25 rounded-4 text-white text-center p-3 mt-4">
         <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="rounded-circle mb-2"
           style="width: 48px; height: 48px; object-fit: cover;" />
@@ -39,11 +38,9 @@
       </div>
     </aside>
 
-    <!-- Mobil Menü Overlay -->
-    <transition name="fade">
-      <div v-if="isMenuOpen && isMobile"
-        class="mobile-menu-overlay position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex flex-column p-4"
-        style="z-index: 1050;">
+    <!-- Mobil Menü -->
+    <div v-if="isMenuOpen && isMobile" class="mobile-menu-overlay">
+      <div class="mobile-sidebar">
         <button class="btn btn-light align-self-end mb-4" @click="$emit('closeSidebar')">
           <X class="icon" />
         </button>
@@ -58,7 +55,7 @@
         <RouterLink class="nav-link text-white fs-5 mb-3" to="/management" @click="$emit('closeSidebar')">👥 Management
         </RouterLink>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -82,8 +79,8 @@ onMounted(() => {
 })
 </script>
 
-
 <style scoped>
+/* Sidebar Bağlantıları */
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -103,14 +100,39 @@ onMounted(() => {
   color: #0d6efd;
 }
 
-/* Animasyon */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+/* Mobil Menü Arka Plan */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.mobile-sidebar {
+  background-color: #1c1c1c;
+  width: 100%;
+  max-width: 320px;
+  height: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-sidebar .nav-link {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.mobile-sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 </style>

@@ -34,13 +34,53 @@
             placeholder="Search shipments by Nº, tracking number, customer, or location..." />
         </div>
 
-        <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-0">
+        <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-2">
           <button class="btn btn-outline-dark d-flex align-items-center" @click="filtersVisible = !filtersVisible">
             <i class="bi bi-funnel-fill me-1"></i> Filters
           </button>
           <button class="btn btn-outline-dark d-flex align-items-center">
             <i class="bi bi-download me-1"></i> Export
           </button>
+        </div>
+      </div>
+
+      <!-- Advanced Filters -->
+      <div class="row mt-3 g-2" v-if="filtersVisible">
+        <div class="col-sm-6 col-md">
+          <select v-model="filters.status" class="form-select">
+            <option value="">All Statuses</option>
+            <option>Shipping</option>
+            <option>Shipped</option>
+            <option>Planned</option>
+            <option>Canceled</option>
+            <option>Warning</option>
+          </select>
+        </div>
+        <div class="col-sm-6 col-md">
+          <select v-model="filters.type" class="form-select">
+            <option value="">All Types</option>
+            <option>Road</option>
+            <option>Air</option>
+            <option>Sea</option>
+          </select>
+        </div>
+        <div class="col-sm-6 col-md">
+          <select v-model="filters.priority" class="form-select">
+            <option value="">All Priorities</option>
+            <option>Standard</option>
+            <option>Express</option>
+            <option>Economy</option>
+          </select>
+        </div>
+        <div class="col-sm-6 col-md">
+          <select v-model="filters.carrier" class="form-select">
+            <option value="">All Carriers</option>
+            <option>Carrier X</option>
+            <option>Carrier Y</option>
+          </select>
+        </div>
+        <div class="col-sm-6 col-md">
+          <input type="date" class="form-control" v-model="filters.date" />
         </div>
       </div>
     </div>
@@ -51,10 +91,8 @@
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>
-                <input type="checkbox" @change="toggleAll($event)" />
-              </th>
-              <th>ID</th>
+              <th><input type="checkbox" @change="toggleAll($event)" /></th>
+              <th>Order Nº</th>
               <th>Origin</th>
               <th>Destination</th>
               <th>Departure</th>
@@ -65,19 +103,13 @@
           </thead>
           <tbody>
             <tr v-for="shipment in paginatedShipments" :key="shipment.id">
-              <td>
-                <input type="checkbox" :value="shipment.id" v-model="selectedShipments" />
-              </td>
+              <td><input type="checkbox" :value="shipment.id" v-model="selectedShipments" /></td>
               <td>{{ shipment.title }}</td>
               <td>{{ shipment.from }}</td>
               <td>{{ shipment.to }}</td>
               <td>{{ shipment.startDate }}</td>
               <td>{{ shipment.endDate }}</td>
-              <td>
-                <span class="badge" :class="statusBadgeClass(shipment.status)">
-                  {{ shipment.status }}
-                </span>
-              </td>
+              <td><span class="badge" :class="statusBadgeClass(shipment.status)">{{ shipment.status }}</span></td>
               <td>{{ shipment.transportType }}</td>
             </tr>
           </tbody>
@@ -121,22 +153,30 @@ const perPage = 5
 
 const selectedShipments = ref([])
 
+const filters = ref({
+  status: '',
+  type: '',
+  priority: '',
+  carrier: '',
+  date: '',
+})
+
 const shipments = ref([
-  { id: 1, title: 'Order Nº 2098 1178 9110', status: 'Shipping', progress: 67, from: 'Florida', to: 'Washington', startDate: '05.12.2020', endDate: '17.12.2020', prepaid: true, transportType: 'DAP', daysUsed: 8, totalDays: 12 },
-  { id: 2, title: 'Order Nº 2341 2312 3143', status: 'Planned', progress: 0, from: 'Oregon', to: 'Maine', startDate: '12.12.2020', endDate: '24.12.2020', prepaid: true, transportType: 'DAT', daysUsed: 0, totalDays: 20 },
-  { id: 3, title: 'Order Nº 2190 7859 9111', status: 'Canceled', progress: 25, from: 'Florida', to: 'Nevada', startDate: '10.12.2020', endDate: '30.12.2021', prepaid: true, transportType: 'CIP', daysUsed: 5, totalDays: 20 },
-  { id: 4, title: 'Order Nº 2476 1812 8911', status: 'Shipping', progress: 35, from: 'Florida', to: 'Texas', startDate: '20.12.2020', endDate: '10.01.2020', prepaid: true, transportType: 'DAP', daysUsed: 8, totalDays: 12 },
-  { id: 5, title: 'Order Nº 2199 4671 1657', status: 'Shipped', progress: 100, from: 'Hawaii', to: 'Florida', startDate: '11.12.2020', endDate: '29.12.2020', prepaid: true, transportType: 'DAT', daysUsed: 12, totalDays: 12 },
-  { id: 6, title: 'Order Nº 2210 1675 1345', status: 'Warning', progress: 25, from: 'Florida', to: 'Washington', startDate: '12.12.2020', endDate: '24.12.2020', prepaid: true, transportType: 'CIP', daysUsed: 5, totalDays: 20 },
-  { id: 7, title: 'Order Nº 2490 1419 4109', status: 'Warning', progress: 25, from: 'Nevada', to: 'Washington', startDate: '22.12.2020', endDate: '12.01.2020', prepaid: true, transportType: 'CIP', daysUsed: 5, totalDays: 20 },
-  { id: 8, title: 'Order Nº 2578 9098 1215', status: 'Canceled', progress: 25, from: 'Florida', to: 'Oregon', startDate: '12.12.2020', endDate: '28.12.2020', prepaid: true, transportType: 'DAT', daysUsed: 5, totalDays: 20 },
-  { id: 9, title: 'Order Nº 3001 5689 9999', status: 'Shipping', progress: 45, from: 'Arizona', to: 'New York', startDate: '05.01.2021', endDate: '15.01.2021', prepaid: false, transportType: 'DAP', daysUsed: 6, totalDays: 14 },
-  { id: 10, title: 'Order Nº 3012 4590 8888', status: 'Planned', progress: 0, from: 'Texas', to: 'Nevada', startDate: '02.01.2021', endDate: '12.01.2021', prepaid: true, transportType: 'CIP', daysUsed: 0, totalDays: 10 },
-  { id: 11, title: 'Order Nº 3200 7788 2211', status: 'Shipping', progress: 60, from: 'Georgia', to: 'Illinois', startDate: '08.01.2021', endDate: '18.01.2021', prepaid: true, transportType: 'DAT', daysUsed: 6, totalDays: 10 },
-  { id: 12, title: 'Order Nº 3300 1111 2222', status: 'Warning', progress: 40, from: 'Utah', to: 'Montana', startDate: '07.01.2021', endDate: '17.01.2021', prepaid: false, transportType: 'CIP', daysUsed: 4, totalDays: 10 },
-  { id: 13, title: 'Order Nº 3400 5555 6666', status: 'Shipping', progress: 80, from: 'Nevada', to: 'Texas', startDate: '04.01.2021', endDate: '14.01.2021', prepaid: true, transportType: 'DAP', daysUsed: 9, totalDays: 10 },
-  { id: 14, title: 'Order Nº 3500 7777 8888', status: 'Shipped', progress: 100, from: 'Colorado', to: 'Kansas', startDate: '01.01.2021', endDate: '05.01.2021', prepaid: true, transportType: 'DAT', daysUsed: 5, totalDays: 5 },
-  { id: 15, title: 'Order Nº 3600 9999 0000', status: 'Canceled', progress: 15, from: 'Ohio', to: 'Florida', startDate: '06.01.2021', endDate: '12.01.2021', prepaid: false, transportType: 'CIP', daysUsed: 2, totalDays: 14 }
+  { id: 1, title: '2098 1178 9110', status: 'Shipping', progress: 67, from: 'Florida', to: 'Washington', startDate: '05.12.2020', endDate: '17.12.2020', prepaid: true, transportType: 'DAP', daysUsed: 8, totalDays: 12 },
+  { id: 2, title: '2341 2312 3143', status: 'Planned', progress: 0, from: 'Oregon', to: 'Maine', startDate: '12.12.2020', endDate: '24.12.2020', prepaid: true, transportType: 'DAT', daysUsed: 0, totalDays: 20 },
+  { id: 3, title: '2190 7859 9111', status: 'Canceled', progress: 25, from: 'Florida', to: 'Nevada', startDate: '10.12.2020', endDate: '30.12.2021', prepaid: true, transportType: 'CIP', daysUsed: 5, totalDays: 20 },
+  { id: 4, title: '2476 1812 8911', status: 'Shipping', progress: 35, from: 'Florida', to: 'Texas', startDate: '20.12.2020', endDate: '10.01.2020', prepaid: true, transportType: 'DAP', daysUsed: 8, totalDays: 12 },
+  { id: 5, title: '2199 4671 1657', status: 'Shipped', progress: 100, from: 'Hawaii', to: 'Florida', startDate: '11.12.2020', endDate: '29.12.2020', prepaid: true, transportType: 'DAT', daysUsed: 12, totalDays: 12 },
+  { id: 6, title: '2210 1675 1345', status: 'Warning', progress: 25, from: 'Florida', to: 'Washington', startDate: '12.12.2020', endDate: '24.12.2020', prepaid: true, transportType: 'CIP', daysUsed: 5, totalDays: 20 },
+  { id: 7, title: '2490 1419 4109', status: 'Warning', progress: 25, from: 'Nevada', to: 'Washington', startDate: '22.12.2020', endDate: '12.01.2020', prepaid: true, transportType: 'CIP', daysUsed: 5, totalDays: 20 },
+  { id: 8, title: '2578 9098 1215', status: 'Canceled', progress: 25, from: 'Florida', to: 'Oregon', startDate: '12.12.2020', endDate: '28.12.2020', prepaid: true, transportType: 'DAT', daysUsed: 5, totalDays: 20 },
+  { id: 9, title: '3001 5689 9999', status: 'Shipping', progress: 45, from: 'Arizona', to: 'New York', startDate: '05.01.2021', endDate: '15.01.2021', prepaid: false, transportType: 'DAP', daysUsed: 6, totalDays: 14 },
+  { id: 10, title: '3012 4590 8888', status: 'Planned', progress: 0, from: 'Texas', to: 'Nevada', startDate: '02.01.2021', endDate: '12.01.2021', prepaid: true, transportType: 'CIP', daysUsed: 0, totalDays: 10 },
+  { id: 11, title: '3200 7788 2211', status: 'Shipping', progress: 60, from: 'Georgia', to: 'Illinois', startDate: '08.01.2021', endDate: '18.01.2021', prepaid: true, transportType: 'DAT', daysUsed: 6, totalDays: 10 },
+  { id: 12, title: '3300 1111 2222', status: 'Warning', progress: 40, from: 'Utah', to: 'Montana', startDate: '07.01.2021', endDate: '17.01.2021', prepaid: false, transportType: 'CIP', daysUsed: 4, totalDays: 10 },
+  { id: 13, title: '3400 5555 6666', status: 'Shipping', progress: 80, from: 'Nevada', to: 'Texas', startDate: '04.01.2021', endDate: '14.01.2021', prepaid: true, transportType: 'DAP', daysUsed: 9, totalDays: 10 },
+  { id: 14, title: '3500 7777 8888', status: 'Shipped', progress: 100, from: 'Colorado', to: 'Kansas', startDate: '01.01.2021', endDate: '05.01.2021', prepaid: true, transportType: 'DAT', daysUsed: 5, totalDays: 5 },
+  { id: 15, title: '3600 9999 0000', status: 'Canceled', progress: 15, from: 'Ohio', to: 'Florida', startDate: '06.01.2021', endDate: '12.01.2021', prepaid: false, transportType: 'CIP', daysUsed: 2, totalDays: 14 }
 ])
 
 function toggleAll(event) {
@@ -150,13 +190,32 @@ function toggleAll(event) {
 function previousPage() {
   if (currentPage.value > 1) currentPage.value--
 }
+
 function nextPage() {
-  if (endIndex.value < shipments.value.length) currentPage.value++
+  if (endIndex.value < filteredShipments.value.length) currentPage.value++
 }
 
 const startIndex = computed(() => (currentPage.value - 1) * perPage)
-const endIndex = computed(() => Math.min(startIndex.value + perPage, shipments.value.length))
-const paginatedShipments = computed(() => shipments.value.slice(startIndex.value, endIndex.value))
+const endIndex = computed(() => Math.min(startIndex.value + perPage, filteredShipments.value.length))
+
+const filteredShipments = computed(() => {
+  return shipments.value.filter(s => {
+    const searchMatch =
+      s.title.toLowerCase().includes(search.value.toLowerCase()) ||
+      s.from.toLowerCase().includes(search.value.toLowerCase()) ||
+      s.to.toLowerCase().includes(search.value.toLowerCase())
+
+    const statusMatch = filters.value.status === '' || s.status === filters.value.status
+    const typeMatch = filters.value.type === '' || s.transportType === filters.value.type
+    const priorityMatch = filters.value.priority === '' || s.priority === filters.value.priority
+    const carrierMatch = filters.value.carrier === '' || s.carrier === filters.value.carrier
+    const dateMatch = filters.value.date === '' || s.startDate === filters.value.date
+
+    return searchMatch && statusMatch && typeMatch && priorityMatch && carrierMatch && dateMatch
+  })
+})
+
+const paginatedShipments = computed(() => filteredShipments.value.slice(startIndex.value, endIndex.value))
 
 function statusBadgeClass(status) {
   switch (status) {

@@ -5,7 +5,7 @@
 
         <!-- Masaüstü -->
         <div class="d-none d-md-flex">
-          <div class="rounded-3 overflow-hidden" style="min-width: 240px;">
+          <div class="rounded-3 overflow-hidden" style="min-width: 200px;">
             <Sidebar />
           </div>
 

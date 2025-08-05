@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Sidebar (masaüstü için) -->
-    <aside v-if="!isMobile" class="d-flex flex-column text-white p-3" style="width: 240px; min-height: 100vh;
+    <aside v-if="!isMobile" class="d-flex flex-column text-white p-3" style="width: 200px; min-height: 100vh;
              background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
              background-color: #1c1c1c;
              background-blend-mode: overlay;

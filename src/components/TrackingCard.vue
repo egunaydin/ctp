@@ -1,10 +1,7 @@
 <template>
   <div
-      class="tracking-card bg-white rounded-4 shadow-sm p-4 d-flex flex-column flex-md-row justify-content-between align-items-start"
-      @click.stop="handleClick"
-
-  >
-
+    class="tracking-card bg-white rounded-4 shadow-sm p-4 d-flex flex-column flex-md-row justify-content-between align-items-start"
+    @click.stop="handleClick">
 
     <!-- Left -->
     <div class="flex-grow-1 w-100">
@@ -47,11 +44,8 @@
       </div>
 
       <div class="progress mt-1" style="height: 4px;">
-        <div
-            class="progress-bar"
-            role="progressbar"
-            :style="{ width: shipment.progress + '%', backgroundColor: getBarColor(shipment.status) }"
-        ></div>
+        <div class="progress-bar" role="progressbar"
+          :style="{ width: shipment.progress + '%', backgroundColor: getBarColor(shipment.status) }"></div>
       </div>
 
     </div>
@@ -118,6 +112,7 @@ function getBarColor(status: string) {
 .tracking-card {
   transition: box-shadow 0.2s ease;
 }
+
 .tracking-card:hover {
   box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.08);
   cursor: pointer;

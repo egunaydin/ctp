@@ -18,7 +18,7 @@
               </div>
               <div class="progress mb-0" style="height: 4px;">
                 <div class="progress-bar" :class="`bg-${label.color}`" role="progressbar"
-                  :style="{ width: (label.count / shipments.length * 150) + '%' }"></div>
+                  :style="{ width: (label.count / shipments.length * 100) + '%' }"></div>
               </div>
             </div>
           </div>
@@ -34,70 +34,26 @@
             placeholder="Search shipments by Nº, tracking number, customer, or location..." />
         </div>
 
-        <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-2">
+        <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-0">
           <button class="btn btn-outline-dark d-flex align-items-center" @click="filtersVisible = !filtersVisible">
             <i class="bi bi-funnel-fill me-1"></i> Filters
           </button>
           <button class="btn btn-outline-dark d-flex align-items-center">
             <i class="bi bi-download me-1"></i> Export
           </button>
-          <button class="btn btn-outline-dark">
-            <i class="bi bi-grid"></i>
-          </button>
-          <button class="btn btn-outline-dark">
-            <i class="bi bi-geo-alt"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Advanced Filters -->
-      <div class="row mt-3 g-2" v-if="filtersVisible">
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.status" class="form-select">
-            <option value="">All Statuses</option>
-            <option>Shipping</option>
-            <option>Shipped</option>
-            <option>Planned</option>
-            <option>Canceled</option>
-            <option>Warning</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.type" class="form-select">
-            <option value="">All Types</option>
-            <option>Road</option>
-            <option>Air</option>
-            <option>Sea</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.priority" class="form-select">
-            <option value="">All Priorities</option>
-            <option>Standard</option>
-            <option>Express</option>
-            <option>Economy</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.carrier" class="form-select">
-            <option value="">All Carriers</option>
-            <option>Carrier X</option>
-            <option>Carrier Y</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <input type="date" class="form-control" v-model="filters.date" />
         </div>
       </div>
     </div>
 
-    <!-- Table with Responsive Scroll -->
+    <!-- Table -->
     <div class="card shadow-sm">
       <div class="table-responsive-sm">
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th><input type="checkbox" /></th>
+              <th>
+                <input type="checkbox" @change="toggleAll($event)" />
+              </th>
               <th>ID</th>
               <th>Origin</th>
               <th>Destination</th>
@@ -108,8 +64,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="shipment in shipments" :key="shipment.id">
-              <td><input type="checkbox" /></td>
+            <tr v-for="shipment in paginatedShipments" :key="shipment.id">
+              <td>
+                <input type="checkbox" :value="shipment.id" v-model="selectedShipments" />
+              </td>
               <td>{{ shipment.title }}</td>
               <td>{{ shipment.from }}</td>
               <td>{{ shipment.to }}</td>
@@ -125,6 +83,30 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center p-3">
+        <small>Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ shipments.length }} shipments</small>
+        <div>
+          <button class="btn btn-outline-secondary btn-sm me-2" @click="previousPage"
+            :disabled="currentPage === 1">Previous</button>
+          <span class="btn btn-dark btn-sm">{{ currentPage }}</span>
+          <button class="btn btn-outline-secondary btn-sm ms-2" @click="nextPage"
+            :disabled="endIndex >= shipments.length">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div v-if="selectedShipments.length > 0"
+      class="position-fixed bottom-0 start-50 translate-middle-x bg-white rounded-top shadow-lg px-4 py-3 d-flex align-items-center gap-3"
+      style="z-index: 1050; width: auto; max-width: 95%; bottom: 2vh;">
+      <span>{{ selectedShipments.length }} shipments selected</span>
+      <button class="btn btn-outline-secondary btn-sm">Clear</button>
+      <button class="btn btn-outline-secondary btn-sm">Print</button>
+      <button class="btn btn-outline-secondary btn-sm">Export</button>
+      <button class="btn btn-outline-secondary btn-sm">Edit</button>
+      <button class="btn btn-danger btn-sm">Delete</button>
     </div>
   </div>
 </template>
@@ -134,13 +116,10 @@ import { ref, computed } from 'vue'
 
 const filtersVisible = ref(false)
 const search = ref('')
-const filters = ref({ status: '', type: '', priority: '', carrier: '', date: '' })
+const currentPage = ref(1)
+const perPage = 5
 
-const statsCards = [
-  { title: 'Total Weight', value: '15.800 kg', subtitle: 'Average weight per shipment: 3.160 kg' },
-  { title: 'Total Value', value: '$139.450', subtitle: 'Average value per shipment: $27.890' },
-  { title: 'Total Items', value: '443', subtitle: 'Average items per shipment: 89' },
-]
+const selectedShipments = ref([])
 
 const shipments = ref([
   { id: 1, title: 'Order Nº 2098 1178 9110', status: 'Shipping', progress: 67, from: 'Florida', to: 'Washington', startDate: '05.12.2020', endDate: '17.12.2020', prepaid: true, transportType: 'DAP', daysUsed: 8, totalDays: 12 },
@@ -160,31 +139,46 @@ const shipments = ref([
   { id: 15, title: 'Order Nº 3600 9999 0000', status: 'Canceled', progress: 15, from: 'Ohio', to: 'Florida', startDate: '06.01.2021', endDate: '12.01.2021', prepaid: false, transportType: 'CIP', daysUsed: 2, totalDays: 14 }
 ])
 
-const statsCardsWithTotal = computed(() => [
-  {
-    title: 'Total Shipments',
-    value: shipments.value.length.toString(),
-    subtitle: 'Summary by status:',
-  },
-  ...statsCards,
-])
+function toggleAll(event) {
+  if (event.target.checked) {
+    selectedShipments.value = paginatedShipments.value.map((s) => s.id)
+  } else {
+    selectedShipments.value = []
+  }
+}
+
+function previousPage() {
+  if (currentPage.value > 1) currentPage.value--
+}
+function nextPage() {
+  if (endIndex.value < shipments.value.length) currentPage.value++
+}
+
+const startIndex = computed(() => (currentPage.value - 1) * perPage)
+const endIndex = computed(() => Math.min(startIndex.value + perPage, shipments.value.length))
+const paginatedShipments = computed(() => shipments.value.slice(startIndex.value, endIndex.value))
 
 function statusBadgeClass(status) {
   switch (status) {
-    case 'Shipping':
-      return 'bg-primary'
-    case 'Shipped':
-      return 'bg-success'
-    case 'Planned':
-      return 'bg-info'
-    case 'Canceled':
-      return 'bg-danger'
-    case 'Warning':
-      return 'bg-warning'
-    default:
-      return 'bg-secondary'
+    case 'Shipping': return 'bg-primary'
+    case 'Shipped': return 'bg-success'
+    case 'Planned': return 'bg-info'
+    case 'Canceled': return 'bg-danger'
+    case 'Warning': return 'bg-warning'
+    default: return 'bg-secondary'
   }
 }
+
+const statsCards = [
+  { title: 'Total Weight', value: '15.800 kg', subtitle: 'Average: 3.160 kg' },
+  { title: 'Total Value', value: '$139.450', subtitle: 'Avg: $27.890' },
+  { title: 'Total Items', value: '443', subtitle: 'Avg: 89' },
+]
+
+const statsCardsWithTotal = computed(() => [
+  { title: 'Total Shipments', value: shipments.value.length.toString(), subtitle: 'Summary by status:' },
+  ...statsCards,
+])
 
 const badgeData = computed(() => ({
   Shipping: { count: shipments.value.filter(s => s.status === 'Shipping').length, color: 'primary', icon: 'bi-truck' },

@@ -1,7 +1,7 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-3">
     <!-- Filtre Dropdown -->
-    <div class="mb-4 text-start">
+    <div class="mb-3 text-start">
       <div class="dropdown d-inline-block">
         <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
           aria-expanded="false">

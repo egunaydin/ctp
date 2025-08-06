@@ -59,9 +59,9 @@
         <div class="col-sm-6 col-md">
           <select v-model="filters.type" class="form-select">
             <option value="">All Types</option>
-            <option>Road</option>
-            <option>Air</option>
-            <option>Sea</option>
+            <option>DAP</option>
+            <option>DAT</option>
+            <option>CIP</option>
           </select>
         </div>
         <div class="col-sm-6 col-md">

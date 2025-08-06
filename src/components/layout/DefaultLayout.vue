@@ -2,16 +2,15 @@
   <div class="min-vh-100 py-4">
     <div class="container">
       <div class="bg-light rounded-4 shadow-sm p-3 position-relative">
-
         <!-- Masaüstü -->
         <div class="d-none d-md-flex">
-          <div class="rounded-3 overflow-hidden" style="min-width: 200px;">
+          <div class="rounded-3 overflow-hidden" style="min-width: 200px">
             <Sidebar />
           </div>
 
           <div class="flex-grow-1 d-flex flex-column ms-3">
             <Topbar />
-            <main class="flex-grow-1 mt-0 ">
+            <main class="flex-grow-1 mt-0">
               <slot />
             </main>
           </div>
@@ -28,25 +27,30 @@
         <!-- Mobil Sidebar -->
         <div v-if="showMobileMenu" class="mobile-sidebar-wrapper">
           <!-- Overlay -->
-          <div class="mobile-sidebar-overlay" @click="showMobileMenu = false"></div>
+          <div
+            class="mobile-sidebar-overlay"
+            @click="showMobileMenu = false"
+          ></div>
 
           <!-- Sidebar Panel -->
           <div class="mobile-sidebar-panel">
-            <Sidebar :isMenuOpen="showMobileMenu" @closeSidebar="showMobileMenu = false" />
+            <Sidebar
+              :isMenuOpen="showMobileMenu"
+              @closeSidebar="showMobileMenu = false"
+            />
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import Sidebar from './Sidebar.vue'
-import Topbar from './Topbar.vue'
+import { ref } from "vue";
+import Sidebar from "./Sidebar.vue";
+import Topbar from "./Topbar.vue";
 
-const showMobileMenu = ref(false)
+const showMobileMenu = ref(false);
 </script>
 
 <style scoped>

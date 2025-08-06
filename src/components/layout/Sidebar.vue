@@ -1,13 +1,19 @@
 <template>
   <div>
     <!-- Sidebar (masaüstü için) -->
-    <aside v-if="!isMobile" class="d-flex flex-column text-white p-3" style="width: 200px; min-height: 100vh;
-             background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
-             background-color: #1c1c1c;
-             background-blend-mode: overlay;
-             background-size: cover;
-             border-radius: 0.75rem;">
-
+    <aside
+      v-if="!isMobile"
+      class="d-flex flex-column text-white p-3"
+      style="
+        width: 200px;
+        min-height: 100vh;
+        background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
+        background-color: #1c1c1c;
+        background-blend-mode: overlay;
+        background-size: cover;
+        border-radius: 0.75rem;
+      "
+    >
       <!-- LOGO -->
       <div class="text-uppercase fw-bold fs-6 mb-4">Logistics System</div>
 
@@ -31,9 +37,15 @@
       </nav>
 
       <!-- Kullanıcı Kutusu -->
-      <div class="bg-white bg-opacity-25 rounded-4 text-white text-center p-3 mt-4">
-        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="rounded-circle mb-2"
-          style="width: 48px; height: 48px; object-fit: cover;" />
+      <div
+        class="bg-white bg-opacity-25 rounded-4 text-white text-center p-3 mt-4"
+      >
+        <img
+          src="https://randomuser.me/api/portraits/women/44.jpg"
+          alt="Profile"
+          class="rounded-circle mb-2"
+          style="width: 48px; height: 48px; object-fit: cover"
+        />
         <div class="fw-bold">Amelia Bernson</div>
         <div class="small mb-2">Your manager</div>
         <button class="btn btn-light btn-sm w-100 fw-semibold">Chat</button>
@@ -44,20 +56,50 @@
     <div v-if="isMenuOpen && isMobile" class="mobile-menu-overlay">
       <div class="mobile-sidebar">
         <!-- Menü Butonu -->
-        <button class="btn btn-outline-light align-self-start mb-4" @click="$emit('closeSidebar')"
-          style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+        <button
+          class="btn btn-outline-light align-self-start mb-4"
+          @click="$emit('closeSidebar')"
+          style="
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
           <Menu :size="40" class="text-white" />
         </button>
 
         <!-- Menü Linkleri -->
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/" @click="$emit('closeSidebar')">🏠 Orders</RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/tracking" @click="$emit('closeSidebar')">📍 Tracking
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/"
+          @click="$emit('closeSidebar')"
+          >🏠 Orders</RouterLink
+        >
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/tracking"
+          @click="$emit('closeSidebar')"
+          >📍 Tracking
         </RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/invoices" @click="$emit('closeSidebar')">📄 Invoices
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/invoices"
+          @click="$emit('closeSidebar')"
+          >📄 Invoices
         </RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/analytics" @click="$emit('closeSidebar')">📊 Analytics
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/analytics"
+          @click="$emit('closeSidebar')"
+          >📊 Analytics
         </RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/management" @click="$emit('closeSidebar')">👥 Management
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/management"
+          @click="$emit('closeSidebar')"
+          >👥 Management
         </RouterLink>
       </div>
     </div>
@@ -65,23 +107,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
-import { LayoutDashboard, Map, FileText, BarChart, Users, Menu } from 'lucide-vue-next'
+import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
+import {
+  LayoutDashboard,
+  Map,
+  FileText,
+  BarChart,
+  Users,
+  Menu,
+} from "lucide-vue-next";
 
 const props = defineProps<{
-  isMenuOpen: boolean
-}>()
+  isMenuOpen: boolean;
+}>();
 
-const emit = defineEmits(['closeSidebar'])
+const emit = defineEmits(["closeSidebar"]);
 
-const isMobile = ref(window.innerWidth < 768)
+const isMobile = ref(window.innerWidth < 768);
 
 onMounted(() => {
-  window.addEventListener('resize', () => {
-    isMobile.value = window.innerWidth < 768
-  })
-})
+  window.addEventListener("resize", () => {
+    isMobile.value = window.innerWidth < 768;
+  });
+});
 </script>
 
 <style scoped>

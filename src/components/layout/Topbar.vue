@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-between align-items-center px-3 py-2">
-    <!-- Sidebar -->
+    <!-- Sol: Sidebar + Arama + Mobil Ayarlar -->
     <div
       class="d-flex align-items-center gap-2 flex-grow-1"
       style="max-width: 500px"
@@ -33,9 +33,24 @@
           :size="16"
         />
       </div>
+
+      <!-- Mobil Ayarlar Butonu -->
+      <button
+        class="btn btn-outline-secondary d-md-none"
+        @click="goToSettings"
+        style="
+          height: 36px;
+          width: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <Settings :size="18" />
+      </button>
     </div>
 
-    <!-- User Card (Dropdown) -->
+    <!-- Sağ: Kullanıcı Kartı (Sadece Masaüstü) -->
     <div class="position-relative d-none d-md-flex align-items-center ms-3">
       <div
         class="bg-white rounded-3 shadow-sm d-flex align-items-center px-3 py-2 user-card"
@@ -65,7 +80,7 @@
       >
         <button class="dropdown-item" @click="goToProfile">👤 Profile</button>
         <button class="dropdown-item" @click="goToSettings">⚙️ Settings</button>
-        <button class="dropdown-item">➜] Settings</button>
+        <button class="dropdown-item">➜] Log Out</button>
       </div>
     </div>
   </div>
@@ -74,7 +89,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { Search, ChevronDown, Menu } from "lucide-vue-next";
+import { Search, ChevronDown, Menu, Settings } from "lucide-vue-next";
 
 const emit = defineEmits(["openSidebar"]);
 const router = useRouter();
@@ -92,6 +107,13 @@ function goToProfile() {
 function goToSettings() {
   showDropdown.value = false;
   router.push({ name: "settings", query: { tab: "general" } });
+}
+
+function logout() {
+  showDropdown.value = false;
+  // Burada gerçek logout işlemini çağırabilirsin:
+  console.log("Logging out...");
+  router.push("/login"); // Örnek olarak login sayfasına yönlendirme
 }
 </script>
 

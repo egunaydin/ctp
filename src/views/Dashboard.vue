@@ -12,8 +12,8 @@
           <h4>{{ card.value }}</h4>
           <small class="text-muted">{{ card.subtitle }}</small>
 
-          <div v-if="card.title === 'Total Shipments'" class="mt-3">
-            <div v-for="(label, key, idx) in badgeData" :key="idx" class="mb-2">
+          <div v-if="card.title === 'Total Shipments'" class="mt-1">
+            <div v-for="(label, key, idx) in badgeData" :key="idx" class="mb-1">
               <div class="d-flex justify-content-between align-items-center">
                 <small :class="`text-${label.color}`">
                   <i :class="`bi ${label.icon}`"></i> {{ key }}

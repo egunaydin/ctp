@@ -65,6 +65,7 @@
       >
         <button class="dropdown-item" @click="goToProfile">👤 Profile</button>
         <button class="dropdown-item" @click="goToSettings">⚙️ Settings</button>
+        <button class="dropdown-item">➜] Settings</button>
       </div>
     </div>
   </div>

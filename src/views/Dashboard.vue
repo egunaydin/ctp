@@ -26,7 +26,7 @@
                   :class="`bg-${label.color}`"
                   role="progressbar"
                   :style="{
-                    width: (label.count / shipments.length) * 100 + '%',
+                    width: (label.count / shipments.length) * 130 + '%',
                   }"
                 ></div>
               </div>

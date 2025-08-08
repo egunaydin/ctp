@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid py-3">
-    <!-- Filtre Dropdown -->
+    <!-- Filter Dropdown -->
     <div class="mb-3 text-start">
       <div class="dropdown d-inline-block">
         <button
@@ -33,17 +33,24 @@
       </div>
     </div>
 
+    <!-- Cards -->
     <div class="row gy-4">
       <div
-        class="col-12 col-md-12 col-xl-6"
+        class="col-12 col-md-12 col-xl-6 tracking-col"
         v-for="shipment in visibleShipments"
         :key="shipment.id"
       >
-        <TrackingCard :shipment="shipment" @click="openDetail(shipment.id)" />
+        <div class="themed-card card shadow-sm border h-100">
+          <TrackingCard
+            :shipment="shipment"
+            class="p-2 p-sm-3"
+            @click="openDetail(shipment.id)"
+          />
+        </div>
       </div>
     </div>
 
-    <!-- Load More Butonu -->
+    <!-- Load More -->
     <div
       class="text-center mt-4"
       v-if="visibleCount < filteredShipments.length"
@@ -333,4 +340,59 @@ const shipments = [
 ];
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Make cards pop in both themes */
+.themed-card {
+  background-color: var(--bs-body-bg) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  box-shadow: var(--bs-box-shadow-sm) !important;
+  border-radius: 0.75rem;
+}
+
+/* Ensure EVERYTHING inside the TrackingCard is readable */
+.tracking-col :deep(*) {
+  color: var(--bs-body-color);
+}
+
+/* Force the “Order Nº …” title to be visible even if component scoped styles set it dark */
+.tracking-col :deep(.order-title),
+.tracking-col :deep(.card-title),
+.tracking-col :deep(.fw-semibold),
+.tracking-col :deep(h5),
+.tracking-col :deep(h6),
+.tracking-col :deep(a.order-link),
+.tracking-col :deep(.order-number) {
+  color: var(--bs-body-color) !important;
+  opacity: 1 !important;
+}
+
+/* Links inside the title */
+.tracking-col :deep(a),
+.tracking-col :deep(a:hover),
+.tracking-col :deep(a:focus) {
+  color: var(--bs-link-color) !important;
+  text-decoration: none;
+}
+
+/* Muted text still readable in dark */
+.tracking-col :deep(.text-muted),
+.tracking-col :deep(.small.text-muted) {
+  color: var(--bs-secondary-color) !important;
+}
+
+/* Normalize inner cards if any */
+.tracking-col :deep(.card) {
+  background-color: var(--bs-body-bg) !important;
+  border-color: var(--bs-border-color-translucent) !important;
+  box-shadow: var(--bs-box-shadow-sm) !important;
+}
+
+/* Optional details */
+.tracking-col :deep(hr) {
+  border-color: var(--bs-border-color);
+  opacity: 1;
+}
+.tracking-col :deep(.badge) {
+  font-weight: 600;
+}
+</style>

@@ -1,17 +1,152 @@
 @import './base.css';
 
+/* ========== THEME TOKENS ========== */
+:root {
+  --bg: #f1f3f5;
+  --card-bg: #ffffff;
+  --text: #212529;
+  --muted: #6c757d;
+  --border: #dee2e6;
+  --hover: #f8f9fa;
 
+  --dropdown-active-bg: #000;
+  --dropdown-active-color: #fff;
+
+  --sidebar-link-color: #212529;
+  --sidebar-hover-bg: #f1f3f5;
+  --sidebar-active-bg: #e9ecef;
+  --sidebar-active-color: #212529;
+}
+
+[data-bs-theme='dark'] {
+  --bg: #171a1d;
+  --card-bg: #1f2327;
+  --text: #e9ecef;
+  --muted: #a5adb4;
+  --border: #2b3035;
+  --hover: #23282d;
+
+  --dropdown-active-bg: #fff;
+  --dropdown-active-color: #000;
+
+  --sidebar-link-color: #e9ecef;
+  --sidebar-hover-bg: rgba(255, 255, 255, .06);
+  --sidebar-active-bg: rgba(255, 255, 255, .10);
+  --sidebar-active-color: #fff;
+}
+
+/* ========== BASE ========== */
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.card,
+.bg-light,
+.rounded-4,
+.rounded-3,
+.shadow-sm {
+  background-color: var(--card-bg) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+input,
+textarea,
+select,
+.form-control {
+  background-color: var(--card-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+}
+
+/* Tables */
+.table thead th {
+  color: var(--text);
+  background-color: rgba(0, 0, 0, .03);
+}
+
+[data-bs-theme='dark'] .table thead th {
+  background-color: rgba(255, 255, 255, .04);
+}
+
+/* ========== DROPDOWN (Topbar) ========== */
+.user-dropdown {
+  position: relative;
+}
+
+.user-dropdown .user-menu.dropdown-menu {
+  z-index: 2000;
+  /* Bootstrap default 1000 — daha üste al */
+  background-color: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  padding: .4rem 0;
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, .12),
+    0 10px 10px rgba(0, 0, 0, .08);
+  min-width: 220px;
+}
+
+.user-dropdown .dropdown-item {
+  color: var(--text);
+  font-size: .9rem;
+  padding: .5rem .9rem;
+}
+
+.user-dropdown .dropdown-item:hover {
+  background-color: var(--hover);
+  color: var(--text);
+}
+
+.user-dropdown .dropdown-item.active,
+.user-dropdown .dropdown-item:active {
+  background-color: var(--dropdown-active-bg) !important;
+  color: var(--dropdown-active-color) !important;
+}
+
+.user-dropdown .dropdown-divider {
+  border-color: var(--border);
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar .nav-link,
+.sidebar .list-group-item {
+  color: var(--sidebar-link-color) !important;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .list-group-item:hover {
+  background-color: var(--sidebar-hover-bg) !important;
+  color: var(--sidebar-link-color) !important;
+}
+
+.sidebar .nav-link.active,
+.sidebar .list-group-item.active {
+  background-color: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-color) !important;
+  border-color: transparent !important;
+}
+
+/* ========== OVERLAY & SLIDE PANEL ========== */
 .overlay-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, .4);
   backdrop-filter: blur(2px);
-
   z-index: 998;
 }
+
 .slide-panel-enter-active,
 .slide-panel-leave-active {
-  transition: transform 0.3s ease;
+  transition: transform .3s ease;
 }
 
 .slide-panel-enter-from,

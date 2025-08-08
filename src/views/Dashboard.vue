@@ -15,9 +15,9 @@
           <div v-if="card.title === 'Total Shipments'" class="mt-1">
             <div v-for="(label, key, idx) in badgeData" :key="idx" class="mb-1">
               <div class="d-flex justify-content-between align-items-center">
-                <small :class="`text-${label.color}`">
-                  <i :class="`bi ${label.icon}`"></i> {{ key }}
-                </small>
+                <small :class="`text-${label.color}`"
+                  ><i :class="`bi ${label.icon}`"></i> {{ key }}</small
+                >
                 <small>{{ label.count }}</small>
               </div>
               <div class="progress mb-0" style="height: 4px">
@@ -36,79 +36,83 @@
       </div>
     </div>
 
-    <!-- Filter Controls -->
-    <div class="card p-3 mb-3 shadow-sm">
-      <div class="row g-2 align-items-center">
-        <div class="col-12 col-lg">
-          <input
-            v-model="search"
-            type="text"
-            class="form-control"
-            placeholder="Search shipments by Nº, tracking number, customer, or location..."
-          />
-        </div>
-
-        <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-2">
-          <button
-            class="btn btn-outline-dark d-flex align-items-center"
-            @click="filtersVisible = !filtersVisible"
-          >
-            <i class="bi bi-funnel-fill me-1"></i> Filters
-          </button>
-          <button class="btn btn-outline-dark d-flex align-items-center">
-            <i class="bi bi-download me-1"></i> Export
-          </button>
-        </div>
-      </div>
-
-      <!-- Advanced Filters -->
-      <div class="row mt-3 g-2" v-if="filtersVisible">
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.status" class="form-select">
-            <option value="">All Statuses</option>
-            <option>Shipping</option>
-            <option>Shipped</option>
-            <option>Planned</option>
-            <option>Canceled</option>
-            <option>Warning</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.type" class="form-select">
-            <option value="">All Types</option>
-            <option>DAP</option>
-            <option>DAT</option>
-            <option>CIP</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.priority" class="form-select">
-            <option value="">All Priorities</option>
-            <option>Standard</option>
-            <option>Express</option>
-            <option>Economy</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <select v-model="filters.carrier" class="form-select">
-            <option value="">All Carriers</option>
-            <option>Carrier X</option>
-            <option>Carrier Y</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-md">
-          <input type="date" class="form-control" v-model="filters.date" />
-        </div>
-      </div>
-    </div>
-
-    <!-- Table -->
+    <!-- ONE BOX: Search + Filters + Table + Pagination -->
     <div class="card shadow-sm">
-      <div class="table-responsive-sm">
+      <!-- Search + quick buttons -->
+      <div class="p-3 pb-0">
+        <div class="row g-2 align-items-center">
+          <div class="col-12 col-lg">
+            <input
+              v-model="search"
+              type="text"
+              class="form-control"
+              placeholder="Search shipments by Nº, tracking number, customer, or location..."
+            />
+          </div>
+          <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-0">
+            <button
+              class="btn btn-outline-secondary d-flex align-items-center"
+              @click="filtersVisible = !filtersVisible"
+            >
+              <i class="bi bi-funnel-fill me-1"></i> Filters
+            </button>
+            <button class="btn btn-outline-secondary d-flex align-items-center">
+              <i class="bi bi-download me-1"></i> Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Advanced Filters -->
+        <div class="row mt-3 g-2" v-if="filtersVisible">
+          <div class="col-sm-6 col-md">
+            <select v-model="filters.status" class="form-select">
+              <option value="">All Statuses</option>
+              <option>Shipping</option>
+              <option>Shipped</option>
+              <option>Planned</option>
+              <option>Canceled</option>
+              <option>Warning</option>
+            </select>
+          </div>
+          <div class="col-sm-6 col-md">
+            <select v-model="filters.type" class="form-select">
+              <option value="">All Types</option>
+              <option>DAP</option>
+              <option>DAT</option>
+              <option>CIP</option>
+            </select>
+          </div>
+          <div class="col-sm-6 col-md">
+            <select v-model="filters.priority" class="form-select">
+              <option value="">All Priorities</option>
+              <option>Standard</option>
+              <option>Express</option>
+              <option>Economy</option>
+            </select>
+          </div>
+          <div class="col-sm-6 col-md">
+            <select v-model="filters.carrier" class="form-select">
+              <option value="">All Carriers</option>
+              <option>Carrier X</option>
+              <option>Carrier Y</option>
+            </select>
+          </div>
+          <div class="col-sm-6 col-md">
+            <input type="date" class="form-control" v-model="filters.date" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-3 border-subtle" />
+
+      <!-- Table -->
+      <div class="table-responsive-sm px-3">
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th><input type="checkbox" @change="toggleAll($event)" /></th>
+              <th style="width: 32px">
+                <input type="checkbox" @change="toggleAll($event)" />
+              </th>
               <th>Order Nº</th>
               <th>Origin</th>
               <th>Destination</th>
@@ -146,11 +150,12 @@
       </div>
 
       <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center p-3">
-        <small
-          >Showing {{ startIndex + 1 }} to {{ endIndex }} of
-          {{ shipments.length }} shipments</small
-        >
+      <div class="d-flex justify-content-between align-items-center p-3 pt-2">
+        <small>
+          Showing {{ startIndex + 1 }} to {{ endIndex }} of
+          {{ filteredShipments.length }} shipments
+          <span class="ms-2">• Page {{ currentPage }} / {{ totalPages }}</span>
+        </small>
         <div>
           <button
             class="btn btn-outline-secondary btn-sm me-2"
@@ -163,7 +168,7 @@
           <button
             class="btn btn-outline-secondary btn-sm ms-2"
             @click="nextPage"
-            :disabled="endIndex >= shipments.length"
+            :disabled="currentPage >= totalPages"
           >
             Next
           </button>
@@ -174,10 +179,12 @@
     <!-- Bottom Action Bar -->
     <div
       v-if="selectedShipments.length > 0"
-      class="position-fixed bottom-0 start-50 translate-middle-x bg-white rounded-top shadow-lg px-4 py-3 d-flex align-items-center gap-3"
-      style="z-index: 1050; width: auto; max-width: 95%; bottom: 2vh"
+      class="action-bar position-fixed bottom-0 start-50 translate-middle-x rounded-top shadow-lg px-4 py-3 d-flex align-items-center gap-3 border"
+      style="z-index: 1070; width: auto; max-width: 95%; bottom: 2vh"
     >
-      <span>{{ selectedShipments.length }} shipments selected</span>
+      <span class="me-2"
+        >{{ selectedShipments.length }} shipments selected</span
+      >
       <button class="btn btn-outline-secondary btn-sm">Clear</button>
       <button class="btn btn-outline-secondary btn-sm">Print</button>
       <button class="btn btn-outline-secondary btn-sm">Export</button>
@@ -188,12 +195,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const filtersVisible = ref(false);
 const search = ref("");
 const currentPage = ref(1);
-const perPage = 5;
+const perPage = 5; // Daha fazla sayfa görmek için 3 yapabilir veya daha çok kayıt ekleyebilirsin.
 
 const selectedShipments = ref([]);
 
@@ -208,7 +215,7 @@ const filters = ref({
 const shipments = ref([
   {
     id: 1,
-    title: "2098 1178 9110",
+    title: "Order Nº 2098 1178 9110",
     status: "Shipping",
     progress: 67,
     from: "Florida",
@@ -222,7 +229,7 @@ const shipments = ref([
   },
   {
     id: 2,
-    title: "2341 2312 3143",
+    title: "Order Nº 2341 2312 3143",
     status: "Planned",
     progress: 0,
     from: "Oregon",
@@ -236,7 +243,7 @@ const shipments = ref([
   },
   {
     id: 3,
-    title: "2190 7859 9111",
+    title: "Order Nº 2190 7859 9111",
     status: "Canceled",
     progress: 25,
     from: "Florida",
@@ -250,7 +257,7 @@ const shipments = ref([
   },
   {
     id: 4,
-    title: "2476 1812 8911",
+    title: "Order Nº 2476 1812 8911",
     status: "Shipping",
     progress: 35,
     from: "Florida",
@@ -264,7 +271,7 @@ const shipments = ref([
   },
   {
     id: 5,
-    title: "2199 4671 1657",
+    title: "Order Nº 2199 4671 1657",
     status: "Shipped",
     progress: 100,
     from: "Hawaii",
@@ -278,7 +285,7 @@ const shipments = ref([
   },
   {
     id: 6,
-    title: "2210 1675 1345",
+    title: "Order Nº 2210 1675 1345",
     status: "Warning",
     progress: 25,
     from: "Florida",
@@ -292,7 +299,7 @@ const shipments = ref([
   },
   {
     id: 7,
-    title: "2490 1419 4109",
+    title: "Order Nº 2490 1419 4109",
     status: "Warning",
     progress: 25,
     from: "Nevada",
@@ -306,7 +313,7 @@ const shipments = ref([
   },
   {
     id: 8,
-    title: "2578 9098 1215",
+    title: "Order Nº 2578 9098 1215",
     status: "Canceled",
     progress: 25,
     from: "Florida",
@@ -320,7 +327,7 @@ const shipments = ref([
   },
   {
     id: 9,
-    title: "3001 5689 9999",
+    title: "Order Nº 3001 5689 9999",
     status: "Shipping",
     progress: 45,
     from: "Arizona",
@@ -334,7 +341,7 @@ const shipments = ref([
   },
   {
     id: 10,
-    title: "3012 4590 8888",
+    title: "Order Nº 3012 4590 8888",
     status: "Planned",
     progress: 0,
     from: "Texas",
@@ -348,7 +355,7 @@ const shipments = ref([
   },
   {
     id: 11,
-    title: "3200 7788 2211",
+    title: "Order Nº 3200 7788 2211",
     status: "Shipping",
     progress: 60,
     from: "Georgia",
@@ -362,7 +369,7 @@ const shipments = ref([
   },
   {
     id: 12,
-    title: "3300 1111 2222",
+    title: "Order Nº 3300 1111 2222",
     status: "Warning",
     progress: 40,
     from: "Utah",
@@ -376,7 +383,7 @@ const shipments = ref([
   },
   {
     id: 13,
-    title: "3400 5555 6666",
+    title: "Order Nº 3400 5555 6666",
     status: "Shipping",
     progress: 80,
     from: "Nevada",
@@ -390,7 +397,7 @@ const shipments = ref([
   },
   {
     id: 14,
-    title: "3500 7777 8888",
+    title: "Order Nº 3500 7777 8888",
     status: "Shipped",
     progress: 100,
     from: "Colorado",
@@ -404,7 +411,7 @@ const shipments = ref([
   },
   {
     id: 15,
-    title: "3600 9999 0000",
+    title: "Order Nº 3600 9999 0000",
     status: "Canceled",
     progress: 15,
     from: "Ohio",
@@ -419,54 +426,54 @@ const shipments = ref([
 ]);
 
 function toggleAll(event) {
-  if (event.target.checked) {
-    selectedShipments.value = paginatedShipments.value.map((s) => s.id);
-  } else {
-    selectedShipments.value = [];
-  }
+  selectedShipments.value = event.target.checked
+    ? paginatedShipments.value.map((s) => s.id)
+    : [];
 }
 
 function previousPage() {
   if (currentPage.value > 1) currentPage.value--;
 }
-
 function nextPage() {
-  if (endIndex.value < filteredShipments.value.length) currentPage.value++;
+  if (currentPage.value < totalPages.value) currentPage.value++;
 }
+
+const filteredShipments = computed(() =>
+  shipments.value.filter((s) => {
+    const q = search.value.toLowerCase();
+
+    const searchMatch =
+      s.title.toLowerCase().includes(q) ||
+      s.from.toLowerCase().includes(q) ||
+      s.to.toLowerCase().includes(q);
+
+    const statusMatch =
+      !filters.value.status || s.status === filters.value.status;
+    const typeMatch =
+      !filters.value.type || s.transportType === filters.value.type;
+    const dateMatch = !filters.value.date || s.startDate === filters.value.date;
+    // priority/carrier veriniz yok; ekleyene kadar false'a düşmemesi için kontrol etmiyoruz.
+
+    return searchMatch && statusMatch && typeMatch && dateMatch;
+  })
+);
+
+// Total pages based on filtered rows
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredShipments.value.length / perPage))
+);
+
+// Clamp currentPage when filters/search change
+watch([filteredShipments, totalPages], () => {
+  if (currentPage.value > totalPages.value)
+    currentPage.value = totalPages.value;
+  if (currentPage.value < 1) currentPage.value = 1;
+});
 
 const startIndex = computed(() => (currentPage.value - 1) * perPage);
 const endIndex = computed(() =>
   Math.min(startIndex.value + perPage, filteredShipments.value.length)
 );
-
-const filteredShipments = computed(() => {
-  return shipments.value.filter((s) => {
-    const searchMatch =
-      s.title.toLowerCase().includes(search.value.toLowerCase()) ||
-      s.from.toLowerCase().includes(search.value.toLowerCase()) ||
-      s.to.toLowerCase().includes(search.value.toLowerCase());
-
-    const statusMatch =
-      filters.value.status === "" || s.status === filters.value.status;
-    const typeMatch =
-      filters.value.type === "" || s.transportType === filters.value.type;
-    const priorityMatch =
-      filters.value.priority === "" || s.priority === filters.value.priority;
-    const carrierMatch =
-      filters.value.carrier === "" || s.carrier === filters.value.carrier;
-    const dateMatch =
-      filters.value.date === "" || s.startDate === filters.value.date;
-
-    return (
-      searchMatch &&
-      statusMatch &&
-      typeMatch &&
-      priorityMatch &&
-      carrierMatch &&
-      dateMatch
-    );
-  });
-});
 
 const paginatedShipments = computed(() =>
   filteredShipments.value.slice(startIndex.value, endIndex.value)
@@ -538,11 +545,9 @@ const badgeData = computed(() => ({
   width: 100%;
   overflow-x: auto;
 }
-
 .table {
   white-space: nowrap;
 }
-
 .table th,
 .table td {
   vertical-align: middle;
@@ -554,15 +559,33 @@ const badgeData = computed(() => ({
   border-radius: 0.5rem;
 }
 
-.table-hover tbody tr:hover {
-  background-color: #f8f9fa;
-}
-
-.table tbody tr {
+.table-hover tbody tr {
   transition: background-color 0.2s ease-in-out;
 }
-
+.table-hover tbody tr:hover {
+  background-color: var(--bs-table-hover-bg, #f8f9fa);
+}
 .table thead th {
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--bs-border-color, #dee2e6);
+}
+
+.border-subtle {
+  border-color: var(--bs-border-color, #dee2e6) !important;
+}
+
+.action-bar {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+/* Dark tema için outline-secondary kontrastı */
+:deep([data-bs-theme="dark"] .btn.btn-outline-secondary) {
+  color: #e9ecef;
+  border-color: #6c757d;
+}
+:deep([data-bs-theme="dark"] .btn.btn-outline-secondary:hover) {
+  background: #6c757d;
+  color: #fff;
 }
 </style>

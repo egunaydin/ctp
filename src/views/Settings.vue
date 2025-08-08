@@ -10,31 +10,34 @@
           class="nav-link"
           :class="{ active: currentTab === 'general' }"
           @click="setTab('general')"
+          href="#"
+          role="tab"
+          >⚙️ General</a
         >
-          ⚙️ General
-        </a>
       </li>
       <li class="nav-item">
         <a
           class="nav-link"
           :class="{ active: currentTab === 'profile' }"
           @click="setTab('profile')"
+          href="#"
+          role="tab"
+          >👤 Profile</a
         >
-          👤 Profile
-        </a>
       </li>
       <li class="nav-item">
         <a
           class="nav-link"
           :class="{ active: currentTab === 'security' }"
           @click="setTab('security')"
+          href="#"
+          role="tab"
+          >🔒 Security</a
         >
-          🔒 Security
-        </a>
       </li>
     </ul>
 
-    <!-- General Tab -->
+    <!-- General -->
     <div v-if="currentTab === 'general'" class="card p-4">
       <h5 class="fw-semibold mb-2">🏢 Company Information</h5>
       <p class="text-muted mb-4">
@@ -68,7 +71,7 @@
       </div>
     </div>
 
-    <!-- Profile Tab -->
+    <!-- Profile -->
     <div v-else-if="currentTab === 'profile'" class="card p-4">
       <h5 class="fw-semibold mb-2">👤 Profile Settings</h5>
       <div class="row g-3">
@@ -91,14 +94,13 @@
       </div>
     </div>
 
-    <!-- Security Tab -->
+    <!-- Security -->
     <div v-else-if="currentTab === 'security'" class="card p-4">
       <h5 class="fw-semibold mb-2">🔒 Security Settings</h5>
       <p class="text-muted mb-4">
         Manage your account security and authentication
       </p>
 
-      <!-- Password -->
       <div
         class="d-flex justify-content-between align-items-center border rounded px-3 py-3 mb-3"
       >
@@ -109,7 +111,6 @@
         <button class="btn btn-outline-secondary">Change Password</button>
       </div>
 
-      <!-- 2FA -->
       <div
         class="d-flex justify-content-between align-items-center border rounded px-3 py-3 mb-3"
       >
@@ -125,6 +126,7 @@
         </div>
       </div>
     </div>
+
     <div class="d-flex justify-content-end mt-4">
       <button class="btn btn-dark px-4">💾 Save Changes</button>
     </div>
@@ -139,12 +141,9 @@ const route = useRoute();
 const router = useRouter();
 
 const currentTab = ref(route.query.tab || "general");
-
 watch(
   () => route.query.tab,
-  (newVal) => {
-    currentTab.value = newVal || "general";
-  }
+  (n) => (currentTab.value = n || "general")
 );
 
 function setTab(tab) {
@@ -167,3 +166,43 @@ const profile = ref({
   phone: "+1 (555) 987-6543",
 });
 </script>
+
+<style scoped>
+/* OrderDetailPanel ile aynı tab görünümü */
+.nav-tabs {
+  border-bottom: 1px solid var(--border, #dee2e6);
+}
+.nav-tabs .nav-link {
+  color: var(--text, #212529);
+  border: 1px solid transparent;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  opacity: 0.75;
+  transition: all 0.15s ease-in-out;
+}
+.nav-tabs .nav-link:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--text, #000) 6%, transparent);
+}
+.nav-tabs .nav-link.active {
+  opacity: 1;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--text, #000) 12%, transparent);
+  border-color: var(--border, #dee2e6) var(--border, #dee2e6) transparent;
+  border-bottom: 3px solid var(--accent, #4dabf7);
+  color: var(--text, #212529);
+}
+
+/* Tema değişkenleri (OrderDetailPanel ile aynı) */
+:global([data-bs-theme="dark"]) {
+  --accent: #4dabf7;
+  --border: #3a3f44;
+  --text: #f1f3f5;
+}
+:global([data-bs-theme="light"]) {
+  --accent: #1971c2;
+  --border: #dee2e6;
+  --text: #212529;
+}
+</style>

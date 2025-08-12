@@ -1,24 +1,18 @@
 <template>
   <div>
-    <!-- Hamburger (sadece mobilde görünür) -->
-    <button
-        class="btn btn-outline-light position-absolute top-0 start-0 mt-2 ms-2 d-md-none"
-        @click="toggleMenu"
-        style="z-index: 1060;"
-    >
-      <Menu />
-    </button>
-
     <!-- Sidebar (masaüstü için) -->
     <aside
-        v-if="!isMobile"
-        class="d-flex flex-column text-white p-3"
-        style="width: 240px; min-height: 100vh;
-             background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
-             background-color: #1c1c1c;
-             background-blend-mode: overlay;
-             background-size: cover;
-             border-radius: 0.75rem;"
+      v-if="!isMobile"
+      class="d-flex flex-column text-white p-3"
+      style="
+        width: 200px;
+        min-height: 105vh;
+        background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
+        background-color: #1c1c1c;
+        background-blend-mode: overlay;
+        background-size: cover;
+        border-radius: 0.75rem;
+      "
     >
       <!-- LOGO -->
       <div class="text-uppercase fw-bold fs-6 mb-4">Logistics System</div>
@@ -43,12 +37,14 @@
       </nav>
 
       <!-- Kullanıcı Kutusu -->
-      <div class="bg-white bg-opacity-25 rounded-4 text-white text-center p-3 mt-4">
+      <div
+        class="bg-white bg-opacity-25 rounded-4 text-white text-center p-3 mt-4"
+      >
         <img
-            src="https://randomuser.me/api/portraits/women/44.jpg"
-            alt="Profile"
-            class="rounded-circle mb-2"
-            style="width: 48px; height: 48px; object-fit: cover;"
+          src="https://randomuser.me/api/portraits/women/44.jpg"
+          alt="Profile"
+          class="rounded-circle mb-2"
+          style="width: 48px; height: 48px; object-fit: cover"
         />
         <div class="fw-bold">Amelia Bernson</div>
         <div class="small mb-2">Your manager</div>
@@ -56,45 +52,85 @@
       </div>
     </aside>
 
-    <!-- Mobil Menü Overlay -->
-    <transition name="fade">
-      <div
-          v-if="isMenuOpen && isMobile"
-          class="mobile-menu-overlay position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex flex-column p-4"
-          style="z-index: 1050;"
-      >
-        <button class="btn btn-light align-self-end mb-4" @click="toggleMenu">
-          <X class="icon" />
+    <!-- Mobil Menü -->
+    <div v-if="isMenuOpen && isMobile" class="mobile-menu-overlay">
+      <div class="mobile-sidebar">
+        <!-- Menü Butonu -->
+        <button
+          class="btn btn-outline-light align-self-start mb-4"
+          @click="$emit('closeSidebar')"
+          style="
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <Menu :size="40" class="text-white" />
         </button>
 
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/" @click="toggleMenu">🏠 Orders</RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/tracking" @click="toggleMenu">📍 Tracking</RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/invoices" @click="toggleMenu">📄 Invoices</RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/analytics" @click="toggleMenu">📊 Analytics</RouterLink>
-        <RouterLink class="nav-link text-white fs-5 mb-3" to="/management" @click="toggleMenu">👥 Management</RouterLink>
+        <!-- Menü Linkleri -->
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/"
+          @click="$emit('closeSidebar')"
+          >🏠 Orders</RouterLink
+        >
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/tracking"
+          @click="$emit('closeSidebar')"
+          >📍 Tracking
+        </RouterLink>
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/invoices"
+          @click="$emit('closeSidebar')"
+          >📄 Invoices
+        </RouterLink>
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/analytics"
+          @click="$emit('closeSidebar')"
+          >📊 Analytics
+        </RouterLink>
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/management"
+          @click="$emit('closeSidebar')"
+          >👥 Management
+        </RouterLink>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
-import { LayoutDashboard, Map, FileText, BarChart, Users, Menu, X } from 'lucide-vue-next'
+import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
+import {
+  LayoutDashboard,
+  Map,
+  FileText,
+  BarChart,
+  Users,
+  Menu,
+} from "lucide-vue-next";
 
-const isMenuOpen = ref(false)
-const isMobile = ref(window.innerWidth < 768)
+const props = defineProps<{
+  isMenuOpen: boolean;
+}>();
 
-function toggleMenu() {
-  isMenuOpen.value = !isMenuOpen.value
-}
+const emit = defineEmits(["closeSidebar"]);
+
+const isMobile = ref(window.innerWidth < 768);
 
 onMounted(() => {
-  window.addEventListener('resize', () => {
-    isMobile.value = window.innerWidth < 768
-    if (!isMobile.value) isMenuOpen.value = false
-  })
-})
+  window.addEventListener("resize", () => {
+    isMobile.value = window.innerWidth < 768;
+  });
+});
 </script>
 
 <style scoped>
@@ -104,24 +140,49 @@ onMounted(() => {
   color: #fff;
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
-  transition: all 0.2s;
   font-weight: 500;
 }
+
 .sidebar-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
 .router-link-exact-active.sidebar-link {
   background-color: #fff;
   color: #0d6efd;
 }
 
-/* Animasyon */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
 }
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+
+.mobile-sidebar {
+  background-color: rgba(0, 0, 0, 0.546);
+  width: 100%;
+  max-width: 320px;
+  height: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-sidebar .nav-link {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.mobile-sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 </style>

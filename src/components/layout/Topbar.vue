@@ -1,11 +1,11 @@
 <template>
   <div class="d-flex justify-content-between align-items-center px-3 py-2">
-    <!-- Sol: Sidebar + Arama + Mobil Ayarlar -->
+    <!-- Sol taraf: mobil menü + arama + mobil aksiyonlar -->
     <div
       class="d-flex align-items-center gap-2 flex-grow-1"
       style="max-width: 500px"
     >
-      <!-- Mobil Hamburger -->
+      <!-- Mobil menü -->
       <button
         class="btn btn-outline-secondary d-md-none"
         @click="emit('openSidebar')"
@@ -21,7 +21,7 @@
         <Menu :size="20" />
       </button>
 
-      <!-- Search -->
+      <!-- Arama -->
       <div class="position-relative w-100">
         <input
           type="text"
@@ -35,7 +35,7 @@
         />
       </div>
 
-      <!-- Mobil: Dark toggle -->
+      <!-- Mobil dark mode -->
       <button
         class="btn btn-outline-secondary d-md-none"
         @click="toggleDarkMode"
@@ -52,7 +52,7 @@
         <Moon v-else :size="18" />
       </button>
 
-      <!-- Mobil: Settings -->
+      <!-- Mobil settings -->
       <button
         class="btn btn-outline-secondary d-md-none"
         @click="goToSettings"
@@ -69,12 +69,12 @@
       </button>
     </div>
 
-    <!-- Sağ: Kullanıcı Kartı (Desktop) -->
+    <!-- Sağ taraf: kullanıcı kartı (desktop) -->
     <div
       class="position-relative d-none d-md-flex align-items-center ms-3 user-dropdown"
       ref="dropdownWrapper"
     >
-      <!-- Desktop dark toggle -->
+      <!-- Desktop dark mode -->
       <button
         class="btn btn-outline-secondary me-2"
         @click="toggleDarkMode"
@@ -91,6 +91,7 @@
         <Moon v-else :size="18" />
       </button>
 
+      <!-- Kullanıcı kartı -->
       <div
         class="rounded-3 shadow-sm d-flex align-items-center px-3 py-2 user-card"
         @click="toggleDropdown"
@@ -103,32 +104,34 @@
         aria-haspopup="menu"
         :aria-expanded="showDropdown ? 'true' : 'false'"
       >
-        <img
-          src="https://randomuser.me/api/portraits/men/45.jpg"
-          alt="Profile"
-          class="rounded-circle me-2"
-          style="width: 36px; height: 36px; object-fit: cover"
-        />
+        <!-- Otomatik baş harf avatar -->
+        <div
+          class="avatar-initials me-2"
+          :style="{ backgroundColor: avatarBg, color: avatarFg }"
+        >
+          {{ initials }}
+        </div>
+
         <div class="me-auto">
           <div class="fw-semibold small" style="color: var(--text)">
-            John Rem
+            {{ displayName }}
           </div>
           <div class="text-muted" style="font-size: 0.75rem">
-            Logistics manager
+            {{ jobTitle }}
           </div>
         </div>
         <ChevronDown :size="16" />
       </div>
 
-      <!-- Dropdown Menu -->
+      <!-- Dropdown menü -->
       <div
         v-if="showDropdown"
         class="dropdown-menu show mt-2 shadow user-menu"
         style="position: absolute; top: 100%; right: 0; display: block"
         role="menu"
       >
-        <button class="dropdown-item" @click="goToProfile">👤 Profile</button>
         <button class="dropdown-item" @click="goToSettings">⚙️ Settings</button>
+        <button class="dropdown-item" @click="goToProfile">👤 Profile</button>
         <button class="dropdown-item" @click="logout">🚪 Log out</button>
       </div>
     </div>
@@ -136,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import {
   Search,
@@ -150,10 +153,37 @@ import {
 const emit = defineEmits(["openSidebar"]);
 const router = useRouter();
 
-const showDropdown = ref(false);
-const isDark = ref(false);
+/* Şimdilik sabit isim ve unvan */
+const displayName = ref("Ensar Günaydın");
+const jobTitle = ref("Yazılım Şefi");
 
-// 🔸 ref artık SADECE kullanıcı kartı+menüyü kapsıyor
+/* Baş harfleri otomatik üret */
+const initials = computed(() =>
+  displayName.value
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((n) => n[0]!)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase()
+);
+
+/* Hafif “name-based” renk */
+function hashToHue(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+const avatarBg = computed(
+  () => `hsl(${hashToHue(displayName.value)}, 25%, 45%)`
+);
+const avatarFg = computed(() => `#fff`);
+
+/* Dropdown & tema */
+const showDropdown = ref(false);
+const isDark = ref(
+  document.documentElement.getAttribute("data-bs-theme") === "dark"
+);
 const dropdownWrapper = ref<HTMLElement | null>(null);
 
 function toggleDropdown() {
@@ -162,16 +192,14 @@ function toggleDropdown() {
 function closeDropdown() {
   showDropdown.value = false;
 }
-
 function handleClickOutside(e: MouseEvent) {
   const el = dropdownWrapper.value;
-  if (!el) return;
-  if (showDropdown.value && !el.contains(e.target as Node)) closeDropdown();
+  if (showDropdown.value && el && !el.contains(e.target as Node))
+    closeDropdown();
 }
 function handleEscape(e: KeyboardEvent) {
   if (e.key === "Escape") closeDropdown();
 }
-
 function goToProfile() {
   closeDropdown();
   router.push({ name: "settings", query: { tab: "profile" } });
@@ -184,7 +212,6 @@ function logout() {
   closeDropdown();
   router.push("/login");
 }
-
 function toggleDarkMode() {
   isDark.value = !isDark.value;
   document.documentElement.setAttribute(
@@ -204,11 +231,25 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.user-card {
+  border: 1px solid var(--border);
+}
 .user-card:hover {
   background-color: var(--hover);
 }
 
-/* Açılır menünün tema uyumu ve katmanı */
+/* Avatar baş harf */
+.avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
 .user-menu {
   min-width: 200px;
   border-radius: 0.5rem;
@@ -224,5 +265,9 @@ onBeforeUnmount(() => {
 }
 .user-menu .dropdown-item:hover {
   background: var(--hover);
+}
+
+.btn-outline-secondary {
+  border-color: var(--border);
 }
 </style>

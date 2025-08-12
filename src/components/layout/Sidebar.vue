@@ -6,7 +6,7 @@
       class="d-flex flex-column text-white p-3"
       style="
         width: 200px;
-        min-height: 105vh;
+        min-height: 90vh;
         background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
         background-color: #1c1c1c;
         background-blend-mode: overlay;

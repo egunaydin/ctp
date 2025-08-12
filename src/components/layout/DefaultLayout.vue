@@ -1,5 +1,5 @@
 <template>
-  <div class="min-vh-100 py-4">
+  <div class="min-vh-90 py-4">
     <div class="container">
       <div class="bg-light rounded-4 shadow-sm p-3 position-relative">
         <!-- Masaüstü -->

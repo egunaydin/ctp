@@ -49,7 +49,7 @@
               placeholder="Search shipments by Nº, tracking number, customer, or location..."
             />
           </div>
-          <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-0">
+          <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-2">
             <button
               class="btn btn-outline-secondary d-flex align-items-center"
               @click="filtersVisible = !filtersVisible"
@@ -215,7 +215,7 @@ const filters = ref({
 const shipments = ref([
   {
     id: 1,
-    title: "Order Nº 2098 1178 9110",
+    title: "2098 1178 9110",
     status: "Shipping",
     progress: 67,
     from: "Florida",
@@ -229,7 +229,7 @@ const shipments = ref([
   },
   {
     id: 2,
-    title: "Order Nº 2341 2312 3143",
+    title: "2341 2312 3143",
     status: "Planned",
     progress: 0,
     from: "Oregon",
@@ -243,7 +243,7 @@ const shipments = ref([
   },
   {
     id: 3,
-    title: "Order Nº 2190 7859 9111",
+    title: "2190 7859 9111",
     status: "Canceled",
     progress: 25,
     from: "Florida",
@@ -257,7 +257,7 @@ const shipments = ref([
   },
   {
     id: 4,
-    title: "Order Nº 2476 1812 8911",
+    title: "2476 1812 8911",
     status: "Shipping",
     progress: 35,
     from: "Florida",
@@ -271,7 +271,7 @@ const shipments = ref([
   },
   {
     id: 5,
-    title: "Order Nº 2199 4671 1657",
+    title: "2199 4671 1657",
     status: "Shipped",
     progress: 100,
     from: "Hawaii",
@@ -285,7 +285,7 @@ const shipments = ref([
   },
   {
     id: 6,
-    title: "Order Nº 2210 1675 1345",
+    title: "2210 1675 1345",
     status: "Warning",
     progress: 25,
     from: "Florida",
@@ -299,7 +299,7 @@ const shipments = ref([
   },
   {
     id: 7,
-    title: "Order Nº 2490 1419 4109",
+    title: "2490 1419 4109",
     status: "Warning",
     progress: 25,
     from: "Nevada",
@@ -313,7 +313,7 @@ const shipments = ref([
   },
   {
     id: 8,
-    title: "Order Nº 2578 9098 1215",
+    title: "2578 9098 1215",
     status: "Canceled",
     progress: 25,
     from: "Florida",
@@ -327,7 +327,7 @@ const shipments = ref([
   },
   {
     id: 9,
-    title: "Order Nº 3001 5689 9999",
+    title: "3001 5689 9999",
     status: "Shipping",
     progress: 45,
     from: "Arizona",
@@ -341,7 +341,7 @@ const shipments = ref([
   },
   {
     id: 10,
-    title: "Order Nº 3012 4590 8888",
+    title: "3012 4590 8888",
     status: "Planned",
     progress: 0,
     from: "Texas",
@@ -355,7 +355,7 @@ const shipments = ref([
   },
   {
     id: 11,
-    title: "Order Nº 3200 7788 2211",
+    title: "3200 7788 2211",
     status: "Shipping",
     progress: 60,
     from: "Georgia",
@@ -369,7 +369,7 @@ const shipments = ref([
   },
   {
     id: 12,
-    title: "Order Nº 3300 1111 2222",
+    title: "3300 1111 2222",
     status: "Warning",
     progress: 40,
     from: "Utah",
@@ -383,7 +383,7 @@ const shipments = ref([
   },
   {
     id: 13,
-    title: "Order Nº 3400 5555 6666",
+    title: "3400 5555 6666",
     status: "Shipping",
     progress: 80,
     from: "Nevada",
@@ -397,7 +397,7 @@ const shipments = ref([
   },
   {
     id: 14,
-    title: "Order Nº 3500 7777 8888",
+    title: "3500 7777 8888",
     status: "Shipped",
     progress: 100,
     from: "Colorado",
@@ -411,7 +411,7 @@ const shipments = ref([
   },
   {
     id: 15,
-    title: "Order Nº 3600 9999 0000",
+    title: "3600 9999 0000",
     status: "Canceled",
     progress: 15,
     from: "Ohio",
@@ -587,5 +587,9 @@ const badgeData = computed(() => ({
 :deep([data-bs-theme="dark"] .btn.btn-outline-secondary:hover) {
   background: #6c757d;
   color: #fff;
+}
+.user-card,
+.btn-outline-secondary {
+  border: 1px solid var(--border) !important;
 }
 </style>

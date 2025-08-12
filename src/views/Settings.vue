@@ -151,19 +151,20 @@ function setTab(tab) {
 }
 
 const form = ref({
-  company: "CargoMax Logistics",
+  company: "Alışan Logistics L.T.D.",
   taxId: "TAX123456789",
-  email: "admin@cargomax.com",
-  phone: "+1 (555) 123-4567",
-  website: "www.cargomax.com",
-  address: "123 Logistics Ave, Transport City, TC 12345",
+  email: "info@alisanlogistics.com",
+  phone: "+90 (216) 469 15 15",
+  website: "www.alisanlogistics.com",
+  address:
+    "İçerenköy Mahallesi. Değirmen Yolu Cd. No:28, Asia Ofis Park A2 Blok K:1, 34752 Ataşehir/İstanbul",
 });
 
 const profile = ref({
-  fullName: "John Rem",
-  title: "Logistics Manager",
-  email: "john.rem@cargomax.com",
-  phone: "+1 (555) 987-6543",
+  fullName: "Ensar Günaydın",
+  title: "Yazilim Sefi",
+  email: "Ensar.GUNAYDIN@alisanlogistics.com",
+  phone: "+90 (530) 300 77 10",
 });
 </script>
 

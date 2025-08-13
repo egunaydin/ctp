@@ -1,7 +1,7 @@
 <template>
-  <div class="min-vh-90 py-4">
+  <div class="layout-wrap min-vh-90 py-4">
     <div class="container">
-      <div class="bg-light rounded-4 shadow-sm p-3 position-relative">
+      <div class="rounded-4 shadow-sm p-3 position-relative layout-card">
         <!-- Masaüstü -->
         <div class="d-none d-md-flex">
           <div class="rounded-3 overflow-hidden" style="min-width: 200px">
@@ -54,6 +54,31 @@ const showMobileMenu = ref(false);
 </script>
 
 <style scoped>
+/* Login sayfası gibi gradient arka plan */
+.layout-wrap {
+  --bg: var(--bs-body-bg);
+  background: radial-gradient(
+      1200px 600px at 10% 5%,
+      rgba(13, 110, 253, 0.06),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 600px at 90% 105%,
+      rgba(111, 66, 193, 0.06),
+      transparent 60%
+    ),
+    var(--bg);
+  padding: 24px;
+}
+
+/* İç kart */
+.layout-card {
+  background: var(--card-bg, #fff);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Mobil sidebar panel */
 .mobile-sidebar {
   position: fixed;
   top: 0;
@@ -67,12 +92,18 @@ const showMobileMenu = ref(false);
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Slide animasyonları kaldırıldı */
+/* Slide animasyonları kapalı */
 .slide-panel-enter-active,
 .slide-panel-leave-active,
 .slide-panel-enter-from,
 .slide-panel-leave-to {
   transition: none !important;
   transform: none !important;
+}
+
+/* Dark mode kart */
+:root[data-bs-theme="dark"] .layout-card {
+  --card-bg: rgba(33, 37, 41, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 </style>

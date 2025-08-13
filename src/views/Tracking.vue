@@ -1,7 +1,7 @@
 <template>
-  <div class="container-fluid py-3">
+  <div class="container-fluid py-2">
     <!-- Filter Dropdown -->
-    <div class="mb-3 text-start">
+    <div class="mb-2 text-start">
       <div class="dropdown d-inline-block">
         <button
           class="btn btn-outline-primary dropdown-toggle"
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Cards -->
-    <div class="row gy-4">
+    <div class="row gy-3">
       <div
         class="col-12 col-md-12 col-xl-6 tracking-col"
         v-for="shipment in visibleShipments"

@@ -1,7 +1,7 @@
 <template>
-  <div class="container-fluid py-3">
+  <div class="container-fluid py-2">
     <!-- TOP BAR: Title + Search + Filters + Sort + New Invoice -->
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
       <h3 class="m-0 me-auto fw-semibold">Invoices</h3>
 
       <!-- Search box -->
@@ -54,9 +54,9 @@
     </div>
 
     <!-- OVERVIEW: Small top statistic cards -->
-    <div class="card shadow-sm border mb-3">
+    <div class="card shadow-sm border mb-1">
       <div class="card-body">
-        <div class="row g-3">
+        <div class="row g-1">
           <div class="col-12">
             <div class="text-muted small fw-semibold">Overview</div>
           </div>
@@ -106,14 +106,14 @@
     <!-- PAYMENT HISTORY: List of invoices with collapsible details -->
     <div class="card shadow-sm border">
       <div class="card-body pb-2">
-        <div class="fw-semibold py-2">Payment History</div>
+        <div class="fw-semibold py-1">Payment History</div>
 
         <!-- Invoice list -->
         <div class="list-group">
           <div
             v-for="(inv, idx) in filteredSorted"
             :key="inv.id"
-            class="list-group-item invoice-row border rounded-3 px-3 py-3 mb-2"
+            class="list-group-item invoice-row border rounded-3 px-3 py-2 mb-2"
           >
             <!-- = Row content = -->
             <div class="row g-2 align-items-center">

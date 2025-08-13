@@ -24,9 +24,12 @@
       <!-- Arama -->
       <div class="position-relative w-100">
         <input
+          v-model="search"
           type="text"
           class="form-control form-control-sm rounded-3 ps-4 pe-5"
           placeholder="Search"
+          @keyup.enter="onSearch"
+          aria-label="Search"
         />
         <Search
           class="position-absolute top-50 translate-middle-y"
@@ -97,7 +100,7 @@
         @click="toggleDropdown"
         style="
           cursor: pointer;
-          min-width: 200px;
+          min-width: 220px;
           background: var(--card-bg);
           color: var(--text);
         "
@@ -132,7 +135,9 @@
       >
         <button class="dropdown-item" @click="goToSettings">⚙️ Settings</button>
         <button class="dropdown-item" @click="goToProfile">👤 Profile</button>
-        <button class="dropdown-item" @click="logout">🚪 Log out</button>
+        <button class="dropdown-item text-danger" @click="logout">
+          🚪 Log out
+        </button>
       </div>
     </div>
   </div>
@@ -149,9 +154,26 @@ import {
   Sun,
   Moon,
 } from "lucide-vue-next";
+// Eğer projende varsa aç:
+let useAuth:
+  | undefined
+  | (() => { isAuthenticated: { value: boolean }; logout?: () => void });
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  useAuth = require("@/useAuth").useAuth;
+} catch (_) {
+  // composable yoksa sorun değil, localStorage ile çalışır
+}
 
 const emit = defineEmits(["openSidebar"]);
 const router = useRouter();
+
+/* Arama */
+const search = ref("");
+function onSearch() {
+  // Buraya arama navigasyonu ekleyebilirsin
+  // router.push({ name: 'search', query: { q: search.value } })
+}
 
 /* Şimdilik sabit isim ve unvan */
 const displayName = ref("Ensar Günaydın");
@@ -165,7 +187,7 @@ const initials = computed(() =>
     .map((n) => n[0]!)
     .slice(0, 2)
     .join("")
-    .toUpperCase()
+    .toLocaleUpperCase("tr-TR")
 );
 
 /* Hafif “name-based” renk */
@@ -208,16 +230,34 @@ function goToSettings() {
   closeDropdown();
   router.push({ name: "settings", query: { tab: "general" } });
 }
-function logout() {
-  closeDropdown();
-  router.push("/login");
-}
 function toggleDarkMode() {
   isDark.value = !isDark.value;
   document.documentElement.setAttribute(
     "data-bs-theme",
     isDark.value ? "dark" : "light"
   );
+}
+
+/** LOGOUT
+ *  - localStorage 'auth' bayrağını temizler (router guard'ın beklediği)
+ *  - varsa useAuth composable'ını da günceller
+ *  - Login rotasına yollar (name: 'Login')
+ */
+async function logout() {
+  try {
+    localStorage.removeItem("auth"); // guard'ın authed kontrolü için
+    if (useAuth) {
+      const auth = useAuth();
+      if (auth?.logout) {
+        auth.logout(); // varsa kendi logout’un
+      } else if (auth?.isAuthenticated) {
+        auth.isAuthenticated.value = false;
+      }
+    }
+  } finally {
+    closeDropdown();
+    await router.push({ name: "Login" });
+  }
 }
 
 onMounted(() => {
@@ -231,6 +271,22 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* Varsayılan tema değişkenleri — projenin globalinde yoksa görünürlük için burada tanımlı */
+:root,
+:host {
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text: #212529;
+  --border: rgba(0, 0, 0, 0.12);
+  --hover: rgba(0, 0, 0, 0.04);
+}
+:root[data-bs-theme="dark"],
+:host([data-bs-theme="dark"]) {
+  --card-bg: rgba(33, 37, 41, 0.92);
+  --text: #f8f9fa;
+  --border: rgba(255, 255, 255, 0.16);
+  --hover: rgba(255, 255, 255, 0.06);
+}
+
 .user-card {
   border: 1px solid var(--border);
 }
@@ -238,7 +294,7 @@ onBeforeUnmount(() => {
   background-color: var(--hover);
 }
 
-/* Avatar baş harf */
+/* Avatar baş harf — net çember */
 .avatar-initials {
   width: 36px;
   height: 36px;
@@ -248,10 +304,12 @@ onBeforeUnmount(() => {
   justify-content: center;
   font-weight: 700;
   letter-spacing: 0.2px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .user-menu {
-  min-width: 200px;
+  min-width: 220px;
   border-radius: 0.5rem;
   background: var(--card-bg);
   color: var(--text);
@@ -259,7 +317,7 @@ onBeforeUnmount(() => {
   z-index: 2000;
 }
 .user-menu .dropdown-item {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   padding: 8px 12px;
   color: var(--text);
 }

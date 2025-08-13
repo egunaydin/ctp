@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid py-3">
+  <div class="container-fluid py-2">
     <!-- Header Cards Ensar -->
     <div class="row g-3 mb-3">
       <div

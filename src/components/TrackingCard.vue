@@ -6,7 +6,7 @@
     <!-- Left -->
     <div class="flex-grow-1 w-100">
       <!-- Title + Badge + % -->
-      <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex justify-content-between align-items-center">
         <div class="fw-semibold fs-6 title">
           {{ shipment.title }}
         </div>
@@ -23,7 +23,7 @@
       </div>
 
       <!-- Etiketler -->
-      <div class="d-flex flex-wrap gap-3 small meta mb-3">
+      <div class="d-flex flex-wrap gap-3 small meta">
         <span>💳 Prepaid</span>
         <span>📦 LTL</span>
         <span>📦 PB</span>
@@ -31,7 +31,7 @@
       </div>
 
       <!-- Route Line -->
-      <div class="d-flex align-items-center justify-content-between route mb-2">
+      <div class="d-flex align-items-center justify-content-between route">
         <span>🚚</span>
         <hr class="flex-grow-1 mx-1 route-hr" />
         <span>✈️</span>

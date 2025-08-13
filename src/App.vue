@@ -1,12 +1,18 @@
 <!-- src/App.vue -->
 <template>
-  <DefaultLayout>
-    <RouterView />
-  </DefaultLayout>
+  <div>
+    <!-- Login ve benzeri sayfalarda layout kullanma -->
+    <RouterView v-if="$route.meta.layout === 'none'" />
+
+    <!-- Diğer tüm sayfalarda DefaultLayout kullan -->
+    <DefaultLayout v-else>
+      <RouterView />
+    </DefaultLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from '@/components/layout/DefaultLayout.vue'
+import DefaultLayout from "@/components/layout/DefaultLayout.vue";
 </script>
 
 <style>

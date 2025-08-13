@@ -2,7 +2,7 @@
   <div
     class="login-wrap min-vh-100 d-flex align-items-center justify-content-center position-relative"
   >
-    <!-- Tema değiştirme butonu sağ üst -->
+    <!-- Tema değiştirme: sağ üst -->
     <button
       class="btn btn-outline-secondary theme-toggle-btn"
       @click="toggleDarkMode"
@@ -22,7 +22,7 @@
         />
       </div>
 
-      <!-- HATA MESAJI -->
+      <!-- Hata (logo altında) -->
       <transition name="fade-fast">
         <div
           v-if="error"
@@ -34,92 +34,99 @@
         </div>
       </transition>
 
-      <form @submit.prevent="onSubmit" novalidate>
-        <!-- Email -->
+      <!-- Form (submit yok; enter kısayolu için prevent) -->
+      <form @submit.prevent>
+        <!-- E-mail -->
         <div class="mb-3">
           <label class="form-label fs-6">E-mail</label>
-          <input
-            v-model.trim="email"
-            type="email"
-            class="form-control form-control-lg"
-            autocomplete="username"
-            required
-            autofocus
-            inputmode="email"
-          />
-        </div>
-
-        <!-- Password -->
-        <transition name="collapse">
-          <div v-if="email" class="collapsible mb-3">
-            <label class="form-label fs-6">Password</label>
+          <div class="input-with-action">
             <input
-              v-model="password"
-              type="password"
-              class="form-control form-control-lg"
-              autocomplete="current-password"
+              ref="emailInputEl"
+              v-model.trim="email"
+              type="email"
+              class="form-control form-control-lg pe-5"
+              autocomplete="username"
               required
+              autofocus
+              inputmode="email"
+              @keyup.enter="verifyEmail"
+              :disabled="checkingEmail || loggingIn || emailVerified"
             />
-          </div>
-        </transition>
-
-        <!-- Submit button -->
-        <transition name="collapse">
-          <div v-if="email && password" class="collapsible d-grid mt-2">
             <button
-              class="btn btn-primary btn-lg"
-              type="submit"
-              :disabled="loading"
+              class="icon-btn"
+              type="button"
+              :disabled="!email || checkingEmail || loggingIn || emailVerified"
+              @click="verifyEmail"
+              aria-label="Verify e-mail"
+              title="Verify e-mail"
             >
               <span
-                v-if="loading"
-                class="spinner-border spinner-border-sm me-2"
+                v-if="checkingEmail"
+                class="spinner-border spinner-border-sm"
               />
-              Login
+              <ArrowRight v-else :size="18" />
             </button>
           </div>
-        </transition>
+        </div>
+
+        <!-- Password (yer her zaman hazır; görünürlük toggle) -->
+        <div class="mb-1 password-slot" :class="{ visible: emailVerified }">
+          <label class="form-label fs-6">Password</label>
+          <div class="input-with-action">
+            <input
+              ref="passwordInputEl"
+              v-model="password"
+              type="password"
+              class="form-control form-control-lg pe-5"
+              autocomplete="current-password"
+              required
+              @keyup.enter="doLogin"
+              :disabled="loggingIn || !emailVerified"
+            />
+            <button
+              class="icon-btn"
+              type="button"
+              :disabled="!password || loggingIn || !emailVerified"
+              @click="doLogin"
+              aria-label="Submit password"
+              title="Submit password"
+            >
+              <span v-if="loggingIn" class="spinner-border spinner-border-sm" />
+              <ArrowRight v-else :size="18" />
+            </button>
+          </div>
+        </div>
+        <!-- Not: Login butonu yok; şifre yanındaki ok ile giriş yapılır -->
       </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useAuth } from "@/useAuth";
-import { Sun, Moon } from "lucide-vue-next";
+import { Sun, Moon, ArrowRight } from "lucide-vue-next";
 
 const router = useRouter();
 const route = useRoute();
-const { login } = useAuth();
+
+const DEMO_EMAIL = "alisan@alisan.com";
+const DEMO_PASS = "12345";
 
 const email = ref("");
 const password = ref("");
-const loading = ref(false);
+const emailVerified = ref(false);
+
+const checkingEmail = ref(false);
+const loggingIn = ref(false);
 const error = ref("");
+
+const emailInputEl = ref<HTMLInputElement | null>(null);
+const passwordInputEl = ref<HTMLInputElement | null>(null);
+
 const isDark = ref(
   document.documentElement.getAttribute("data-bs-theme") === "dark"
 );
-
-async function onSubmit() {
-  error.value = "";
-  loading.value = true;
-
-  try {
-    const ok = await login(email.value, password.value);
-    if (ok) {
-      const target = (route.query.redirect as string) || "/dashboard";
-      router.replace(target);
-    } else {
-      error.value = "Invalid e-mail or password.";
-    }
-  } catch {
-    error.value = "Something went wrong. Please try again.";
-  } finally {
-    loading.value = false;
-  }
-}
 
 function toggleDarkMode() {
   isDark.value = !isDark.value;
@@ -128,9 +135,65 @@ function toggleDarkMode() {
     isDark.value ? "dark" : "light"
   );
 }
+
+/** 1) E-mail doğrulama (DEMO): sadece alisan@alisan.com kabul */
+async function verifyEmail() {
+  error.value = "";
+  if (!email.value) return;
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRe.test(email.value)) {
+    error.value = "Please enter a valid e-mail format.";
+    emailVerified.value = false;
+    return;
+  }
+
+  checkingEmail.value = true;
+  try {
+    const normalized = email.value.trim().toLowerCase();
+    if (normalized === DEMO_EMAIL) {
+      emailVerified.value = true;
+      await nextTick();
+      passwordInputEl.value?.focus();
+    } else {
+      emailVerified.value = false;
+      error.value = "Please enter a valid e-mail address.";
+      await nextTick();
+      emailInputEl.value?.focus();
+    }
+  } finally {
+    checkingEmail.value = false;
+  }
+}
+
+/** 2) Şifre doğrulama (DEMO) ve otomatik giriş */
+async function doLogin() {
+  error.value = "";
+  if (!emailVerified.value) {
+    await verifyEmail();
+    if (!emailVerified.value) return;
+  }
+  if (!password.value) return;
+
+  loggingIn.value = true;
+  try {
+    if (password.value === DEMO_PASS) {
+      localStorage.setItem("auth", "1");
+      const target = (route.query.redirect as string) || "/dashboard";
+      await router.replace(target);
+    } else {
+      error.value = "Invalid password.";
+      await nextTick();
+      passwordInputEl.value?.focus();
+    }
+  } finally {
+    loggingIn.value = false;
+  }
+}
 </script>
 
 <style scoped>
+/* Arka plan */
 .login-wrap {
   --bg: var(--bs-body-bg);
   background: radial-gradient(
@@ -157,9 +220,9 @@ function toggleDarkMode() {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-color: var(--border, rgba(0, 0, 0, 0.12));
 }
 
+/* Kart */
 .login-card {
   width: 100%;
   max-width: 560px;
@@ -168,43 +231,60 @@ function toggleDarkMode() {
   background: var(--card-bg, #fff);
 }
 
+/* Logo */
 .logo-container {
   display: flex;
   justify-content: center;
 }
 .logo-img {
-  max-width: 300px;
+  max-width: 340px;
   height: auto;
   display: block;
 }
 
+/* Input + ok butonu aynı kapsayıcıda */
+.input-with-action {
+  position: relative;
+}
+.icon-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%; /* her zaman input'un tam ortası */
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-secondary-color, #6c757d);
+}
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.icon-btn:hover:not(:disabled) {
+  color: var(--bs-primary, #0d6efd);
+}
+
+/* Hata metni */
 .invalid-hint {
   text-align: left;
 }
 
-.collapsible {
-  overflow: hidden;
-}
-.collapse-enter-active,
-.collapse-leave-active {
-  transition: max-height 260ms ease, opacity 220ms ease, transform 240ms ease,
-    margin 220ms ease, padding 220ms ease;
-}
-.collapse-enter-from,
-.collapse-leave-to {
-  max-height: 0;
+/* Parola alanı her zaman yer kaplar (kart büyümesin) */
+.password-slot {
   opacity: 0;
-  transform: translateY(-8px);
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  visibility: hidden;
+  height: 92px; /* label + input yüksekliği */
+  transition: opacity 0.25s ease;
 }
-.collapse-enter-to,
-.collapse-leave-from {
-  max-height: 200px;
+.password-slot.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
+/* Fade animasyonu */
 .fade-fast-enter-active,
 .fade-fast-leave-active {
   transition: opacity 160ms ease;
@@ -214,6 +294,7 @@ function toggleDarkMode() {
   opacity: 0;
 }
 
+/* Karanlık tema */
 :root[data-bs-theme="dark"] .login-card {
   --card-bg: rgba(33, 37, 41, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.08);

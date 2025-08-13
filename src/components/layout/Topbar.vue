@@ -294,7 +294,6 @@ onBeforeUnmount(() => {
   background-color: var(--hover);
 }
 
-/* Avatar baş harf — net çember */
 .avatar-initials {
   width: 36px;
   height: 36px;
@@ -327,5 +326,34 @@ onBeforeUnmount(() => {
 
 .btn-outline-secondary {
   border-color: var(--border);
+}
+.avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+
+  background: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.25),
+      rgba(255, 255, 255, 0.06) 60%,
+      rgba(255, 255, 255, 0.02)
+    ),
+    linear-gradient(145deg, #ffffff, #8a8a8a);
+
+  border: 2px solid rgba(255, 255, 255, 0.85);
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(13, 110, 253, 0.18);
+
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

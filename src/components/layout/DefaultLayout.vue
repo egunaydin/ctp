@@ -54,17 +54,16 @@ const showMobileMenu = ref(false);
 </script>
 
 <style scoped>
-/* Login sayfası gibi gradient arka plan */
 .layout-wrap {
   --bg: var(--bs-body-bg);
   background: radial-gradient(
       1200px 600px at 10% 5%,
-      rgba(13, 110, 253, 0.06),
+      rgba(13, 109, 253, 0.18),
       transparent 60%
     ),
     radial-gradient(
       900px 600px at 90% 105%,
-      rgba(111, 66, 193, 0.06),
+      rgba(111, 66, 193, 0.18),
       transparent 60%
     ),
     var(--bg);
@@ -92,7 +91,6 @@ const showMobileMenu = ref(false);
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Slide animasyonları kapalı */
 .slide-panel-enter-active,
 .slide-panel-leave-active,
 .slide-panel-enter-from,
@@ -101,7 +99,6 @@ const showMobileMenu = ref(false);
   transform: none !important;
 }
 
-/* Dark mode kart */
 :root[data-bs-theme="dark"] .layout-card {
   --card-bg: rgba(33, 37, 41, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.08);

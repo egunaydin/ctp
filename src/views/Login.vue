@@ -1,8 +1,8 @@
 <template>
   <div
-    class="login-wrap min-vh-100 d-flex align-items-center justify-content-center position-relative"
+    class="login-wrap min-vh-100 d-flex align-items-center justify-content-center"
   >
-    <!-- Tema değiştirme: sağ üst -->
+    <!-- Theme toggle (fixed) -->
     <button
       class="btn btn-outline-secondary theme-toggle-btn"
       @click="toggleDarkMode"
@@ -12,92 +12,93 @@
       <Moon v-else :size="18" />
     </button>
 
-    <div class="login-card card shadow-lg p-4 p-md-5">
-      <!-- Logo -->
-      <div class="logo-container mx-auto mb-3">
-        <img
-          src="https://img-kariyer.mncdn.com/mnpadding/1200/630/FFFFFF/UploadFiles/Clients/SquareLogo/313/1313_298630.jpeg"
-          alt="Alışan Logistics"
-          class="logo-img"
-        />
-      </div>
-
-      <!-- Hata (logo altında) -->
-      <transition name="fade-fast">
-        <div
-          v-if="error"
-          class="invalid-hint text-danger small mb-3"
-          role="alert"
-          aria-live="polite"
-        >
-          {{ error }}
+    <div class="login-card shadow-apple">
+      <div class="content-narrow">
+        <!-- Logo -->
+        <div class="logo-container mx-auto">
+          <img
+            :src="isDark ? darkLogo : lightLogo"
+            alt="Alışan Logistics"
+            class="logo-img"
+          />
         </div>
-      </transition>
 
-      <!-- Form (submit yok; enter kısayolu için prevent) -->
-      <form @submit.prevent>
-        <!-- E-mail -->
-        <div class="mb-3">
-          <label class="form-label fs-6">E-mail</label>
-          <div class="input-with-action">
-            <input
-              ref="emailInputEl"
-              v-model.trim="email"
-              type="email"
-              class="form-control form-control-lg pe-5"
-              autocomplete="username"
-              required
-              autofocus
-              inputmode="email"
-              @keyup.enter="verifyEmail"
-              :disabled="checkingEmail || loggingIn || emailVerified"
-            />
-            <button
-              class="icon-btn"
-              type="button"
-              :disabled="!email || checkingEmail || loggingIn || emailVerified"
-              @click="verifyEmail"
-              aria-label="Verify e-mail"
-              title="Verify e-mail"
-            >
-              <span
-                v-if="checkingEmail"
-                class="spinner-border spinner-border-sm"
+        <!-- Error (no layout shift) -->
+        <transition name="fade-fast">
+          <div v-if="error" class="error-text" role="alert" aria-live="polite">
+            {{ error }}
+          </div>
+        </transition>
+        <div v-show="!error" class="error-placeholder" aria-hidden="true"></div>
+
+        <form @submit.prevent>
+          <!-- E-mail -->
+          <div class="mb-3">
+            <div class="input-with-action">
+              <input
+                ref="emailInputEl"
+                v-model.trim="email"
+                type="email"
+                class="form-control form-control-xl pe-5"
+                placeholder="E-mail"
+                autocomplete="username"
+                required
+                autofocus
+                inputmode="email"
+                @keyup.enter="verifyEmail"
+                :disabled="checkingEmail || loggingIn || emailVerified"
               />
-              <ArrowRight v-else :size="18" />
-            </button>
+              <button
+                class="icon-btn"
+                type="button"
+                :disabled="
+                  !email || checkingEmail || loggingIn || emailVerified
+                "
+                @click="verifyEmail"
+                aria-label="Verify e-mail"
+                title="Verify e-mail"
+              >
+                <span
+                  v-if="checkingEmail"
+                  class="spinner-border spinner-border-sm"
+                />
+                <ArrowRight v-else :size="20" />
+              </button>
+            </div>
           </div>
-        </div>
 
-        <!-- Password (yer her zaman hazır; görünürlük toggle) -->
-        <div class="mb-1 password-slot" :class="{ visible: emailVerified }">
-          <label class="form-label fs-6">Password</label>
-          <div class="input-with-action">
-            <input
-              ref="passwordInputEl"
-              v-model="password"
-              type="password"
-              class="form-control form-control-lg pe-5"
-              autocomplete="current-password"
-              required
-              @keyup.enter="doLogin"
-              :disabled="loggingIn || !emailVerified"
-            />
-            <button
-              class="icon-btn"
-              type="button"
-              :disabled="!password || loggingIn || !emailVerified"
-              @click="doLogin"
-              aria-label="Submit password"
-              title="Submit password"
-            >
-              <span v-if="loggingIn" class="spinner-border spinner-border-sm" />
-              <ArrowRight v-else :size="18" />
-            </button>
+          <!-- Password -->
+          <div class="mb-2 password-slot" :class="{ visible: emailVerified }">
+            <div class="input-with-action">
+              <input
+                ref="passwordInputEl"
+                v-model="password"
+                type="password"
+                class="form-control form-control-xl pe-5"
+                placeholder="Password"
+                autocomplete="current-password"
+                required
+                @keyup.enter="doLogin"
+                :disabled="loggingIn || !emailVerified"
+              />
+              <button
+                class="icon-btn"
+                type="button"
+                :disabled="!password || loggingIn || !emailVerified"
+                @click="doLogin"
+                aria-label="Submit password"
+                title="Submit password"
+              >
+                <span
+                  v-if="loggingIn"
+                  class="spinner-border spinner-border-sm"
+                />
+                <ArrowRight v-else :size="20" />
+              </button>
+            </div>
           </div>
-        </div>
-        <!-- Not: Login butonu yok; şifre yanındaki ok ile giriş yapılır -->
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -106,6 +107,9 @@
 import { ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Sun, Moon, ArrowRight } from "lucide-vue-next";
+
+import darkLogo from "@/assets/alışan logo.png";
+import lightLogo from "@/assets/alışan logo açık.png";
 
 const router = useRouter();
 const route = useRoute();
@@ -136,7 +140,6 @@ function toggleDarkMode() {
   );
 }
 
-/** 1) E-mail doğrulama (DEMO): sadece alisan@alisan.com kabul */
 async function verifyEmail() {
   error.value = "";
   if (!email.value) return;
@@ -150,8 +153,7 @@ async function verifyEmail() {
 
   checkingEmail.value = true;
   try {
-    const normalized = email.value.trim().toLowerCase();
-    if (normalized === DEMO_EMAIL) {
+    if (email.value.trim().toLowerCase() === DEMO_EMAIL) {
       emailVerified.value = true;
       await nextTick();
       passwordInputEl.value?.focus();
@@ -166,7 +168,6 @@ async function verifyEmail() {
   }
 }
 
-/** 2) Şifre doğrulama (DEMO) ve otomatik giriş */
 async function doLogin() {
   error.value = "";
   if (!emailVerified.value) {
@@ -193,26 +194,26 @@ async function doLogin() {
 </script>
 
 <style scoped>
-/* Arka plan */
+/* Page bg */
 .login-wrap {
   --bg: var(--bs-body-bg);
   background: radial-gradient(
       1200px 600px at 10% 5%,
-      rgba(13, 110, 253, 0.06),
+      rgba(13, 109, 253, 0.18),
       transparent 60%
     ),
     radial-gradient(
       900px 600px at 90% 105%,
-      rgba(111, 66, 193, 0.06),
+      rgba(111, 66, 193, 0.18),
       transparent 60%
     ),
     var(--bg);
   padding: 24px;
 }
 
-/* Sağ üst tema butonu */
+/* Theme button (fixed) */
 .theme-toggle-btn {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   height: 36px;
@@ -220,40 +221,76 @@ async function doLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 
-/* Kart */
+/* Center card — smaller, taller */
 .login-card {
-  width: 100%;
-  max-width: 560px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  width: min(900px, 88vw); /* biraz daralttık */
+  min-height: 65vh; /* biraz uzattık */
+  border-radius: 28px;
   background: var(--card-bg, #fff);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: clamp(20px, 3vw, 36px);
 }
 
-/* Logo */
+/* Shadow */
+.shadow-apple {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 40px 120px rgba(0, 0, 0, 0.12);
+}
+
+/* Inner area */
+.content-narrow {
+  width: min(500px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 55vh;
+}
+
+/* Logo spacing */
 .logo-container {
   display: flex;
   justify-content: center;
+  margin-bottom: 24px; /* logo ile form arasına daha sağlıklı boşluk */
+  margin-top: -10px;
 }
 .logo-img {
-  max-width: 340px;
+  max-width: 300px;
   height: auto;
-  display: block;
 }
 
-/* Input + ok butonu aynı kapsayıcıda */
+/* Error slot (sabit yükseklik) */
+.error-text,
+.error-placeholder {
+  min-height: 22px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.error-text {
+  color: #dc3545;
+}
+
+/* Inputs */
+.form-control-xl {
+  height: 56px;
+  font-size: 1rem;
+  border-radius: 12px;
+}
+
+/* Input + arrow */
 .input-with-action {
   position: relative;
 }
 .icon-btn {
   position: absolute;
   right: 10px;
-  top: 50%; /* her zaman input'un tam ortası */
+  top: 50%;
   transform: translateY(-50%);
   border: none;
   background: transparent;
-  padding: 6px;
+  padding: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -267,16 +304,10 @@ async function doLogin() {
   color: var(--bs-primary, #0d6efd);
 }
 
-/* Hata metni */
-.invalid-hint {
-  text-align: left;
-}
-
-/* Parola alanı her zaman yer kaplar (kart büyümesin) */
+/* Password reveal (no jump) */
 .password-slot {
   opacity: 0;
   visibility: hidden;
-  height: 92px; /* label + input yüksekliği */
   transition: opacity 0.25s ease;
 }
 .password-slot.visible {
@@ -284,7 +315,7 @@ async function doLogin() {
   visibility: visible;
 }
 
-/* Fade animasyonu */
+/* Fade */
 .fade-fast-enter-active,
 .fade-fast-leave-active {
   transition: opacity 160ms ease;
@@ -294,9 +325,9 @@ async function doLogin() {
   opacity: 0;
 }
 
-/* Karanlık tema */
+/* Dark card */
 :root[data-bs-theme="dark"] .login-card {
-  --card-bg: rgba(33, 37, 41, 0.95);
+  --card-bg: rgba(33, 37, 41, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 </style>

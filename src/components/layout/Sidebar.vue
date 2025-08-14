@@ -135,19 +135,16 @@ onBeforeUnmount(() => window.removeEventListener("resize", onResize));
 const displayName = computed(() => props.userName?.trim() || "Sinem BAHAR");
 const displayRole = computed(() => props.userRole?.trim() || "Your manager");
 
-/** İsimden baş harfleri üretir (TR dil kurallarıyla) */
 function getInitials(name: string) {
   const parts = name
     .split(" ")
     .map((p) => p.trim())
     .filter(Boolean);
-
-  if (parts.length === 0) return "";
+  if (!parts.length) return "";
   const first = parts[0][0] || "";
   const last = parts.length > 1 ? parts[parts.length - 1][0] || "" : "";
   return (first + last).toLocaleUpperCase("tr-TR");
 }
-
 const initials = computed(() => getInitials(displayName.value));
 </script>
 
@@ -168,44 +165,41 @@ const initials = computed(() => getInitials(displayName.value));
   color: #0d6efd;
 }
 
-/* Kullanıcı kartını ortala ve belirginleştir */
+/* Kullanıcı kartı */
 .user-card {
   text-align: center;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* Baş harf avatarı: net çember + koyu arka planla uyumlu degrade */
+/* Daha okunaklı avatar */
 .avatar-initials {
-  width: 56px; /* biraz büyüttüm, çember daha net */
+  --avatar-bg: #1f2630; /* koyu, düz zemin */
+  --avatar-border: #ffffffe6; /* parlak beyaz kenar */
+  --avatar-ring: rgba(0, 0, 0, 0.45); /* dış halka gölgesi */
+
+  width: 56px;
   height: 56px;
   border-radius: 9999px;
-
-  /* yumuşak ışık ve derinlik */
   background: radial-gradient(
-      circle at 30% 30%,
-      rgba(255, 255, 255, 0.25),
-      rgba(255, 255, 255, 0.06) 60%,
-      rgba(255, 255, 255, 0.02)
+      120% 120% at 30% 25%,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0) 45%
     ),
-    linear-gradient(145deg, #ffffff, #8a8a8a);
-
-  /* belirgin çember */
-  border: 2px solid rgba(255, 255, 255, 0.85);
-
-  /* dış halka ve gölge */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(13, 110, 253, 0.18);
+    var(--avatar-bg);
+  border: 2px solid var(--avatar-border);
+  box-shadow: 0 2px 10px var(--avatar-ring),
+    /* dış gölge */ 0 0 0 3px rgba(255, 255, 255, 0.08); /* yumuşak dış halka */
 
   color: #fff;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 18px;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); /* beyaz harfe kontrast */
 
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* ortalama */
   margin-left: auto;
   margin-right: auto;
 }

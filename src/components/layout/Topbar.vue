@@ -328,31 +328,31 @@ onBeforeUnmount(() => {
   border-color: var(--border);
 }
 .avatar-initials {
-  width: 36px;
-  height: 36px;
+  --avatar-bg: #6b8e23; /* haki zemin */
+  --avatar-border: #ffffffe6; /* parlak beyaz kenar */
+  --avatar-ring: rgba(0, 0, 0, 0.45); /* dış halka gölgesi */
+
+  width: 40px;
+  height: 40px;
   border-radius: 9999px;
-
   background: radial-gradient(
-      circle at 30% 30%,
-      rgba(255, 255, 255, 0.25),
-      rgba(255, 255, 255, 0.06) 60%,
-      rgba(255, 255, 255, 0.02)
+      120% 120% at 30% 25%,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0) 45%
     ),
-    linear-gradient(145deg, #ffffff, #8a8a8a);
-
-  border: 2px solid rgba(255, 255, 255, 0.85);
-
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(13, 110, 253, 0.18);
+    var(--avatar-bg);
+  border: 2px solid var(--avatar-border);
+  box-shadow: 0 2px 10px var(--avatar-ring), 0 0 0 3px rgba(255, 255, 255, 0.08);
 
   color: #fff;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.4px;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin-left: auto;
   margin-right: auto;
 }

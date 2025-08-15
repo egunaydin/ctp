@@ -2,27 +2,13 @@
   <div
     class="login-wrap min-vh-100 d-flex align-items-center justify-content-center"
   >
-    <!-- Theme toggle (fixed) -->
-    <button
-      class="btn btn-outline-secondary theme-toggle-btn"
-      @click="toggleDarkMode"
-      aria-label="Toggle dark mode"
-    >
-      <Sun v-if="!isDark" :size="18" />
-      <Moon v-else :size="18" />
-    </button>
-
     <!-- Center card -->
     <div class="login-card shadow-apple">
       <div class="content-col">
         <!-- Top (logo + form) -->
         <div class="top-block">
           <div class="logo-container">
-            <img
-              :src="isDark ? darkLogo : lightLogo"
-              alt="Alışan Logistics"
-              class="logo-img"
-            />
+            <img :src="lightLogo" alt="Alışan Logistics" class="logo-img" />
           </div>
 
           <!-- Shared error/info row -->
@@ -41,6 +27,9 @@
             @submit.prevent="doLogin"
             class="form-stack"
           >
+            <!-- reset başlığı kadar yer tutan boşluk -->
+            <div class="field heading-spacer" aria-hidden="true"></div>
+
             <!-- E-mail -->
             <div class="field">
               <div class="input-with-action">
@@ -113,7 +102,8 @@
 
           <!-- RESET FORM -->
           <form v-else @submit.prevent="doReset" class="form-stack">
-            <div class="field">
+            <!-- login ile aynı yükseklikte başlık alanı -->
+            <div class="field heading-spacer">
               <div class="reset-title">Reset your password</div>
             </div>
 
@@ -133,6 +123,10 @@
               </div>
             </div>
 
+            <!-- login'deki şifre satırının yüksekliğini dengeleyen boşluk -->
+            <div class="field field--reserve" aria-hidden="true"></div>
+
+            <!-- Aksiyon satırı: 20px yukarı ve e-mail satırıyla hizalı -->
             <div class="reset-actions">
               <button
                 type="button"
@@ -162,17 +156,16 @@
 
         <!-- Bottom (extras) -->
         <div class="extras">
-          <label
-            class="stay d-inline-flex align-items-center gap-2"
-            aria-disabled="true"
-          >
-            <!-- TİKLİ ve TIKLANAMAZ -->
-            <input type="checkbox" class="form-check-input" checked disabled />
+          <label class="stay d-inline-flex align-items-center gap-2">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              v-model="isStayConnected"
+            />
             <span>Stay connected</span>
           </label>
 
           <div class="links">
-            <!-- Forgot password toggles to reset mode -->
             <button type="button" class="link-btn" @click="switchToReset">
               Forgot password?
             </button>
@@ -187,22 +180,17 @@
 <script setup lang="ts">
 import { ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Sun, Moon, ArrowRight } from "lucide-vue-next";
-
-import darkLogo from "@/assets/alışan logo.png";
+import { ArrowRight } from "lucide-vue-next";
 import lightLogo from "@/assets/alışan logo açık.png";
 
 const router = useRouter();
 const route = useRoute();
 
-/* Demo auth */
 const DEMO_EMAIL = "alisan@alisan.com";
 const DEMO_PASS = "12345";
 
-/* Mode: 'login' | 'reset' */
 const mode = ref<"login" | "reset">("login");
 
-/* Login state */
 const email = ref("");
 const password = ref("");
 const emailVerified = ref(false);
@@ -211,29 +199,16 @@ const checkingEmail = ref(false);
 const loggingIn = ref(false);
 const error = ref("");
 
-/* Reset state */
 const resetEmail = ref("");
 const resetting = ref(false);
 const resetInfo = ref("");
 
-/* Refs */
 const emailInputEl = ref<HTMLInputElement | null>(null);
 const passwordInputEl = ref<HTMLInputElement | null>(null);
 const resetEmailInputEl = ref<HTMLInputElement | null>(null);
 
-/* Theme */
-const isDark = ref(
-  document.documentElement.getAttribute("data-bs-theme") === "dark"
-);
-function toggleDarkMode() {
-  isDark.value = !isDark.value;
-  document.documentElement.setAttribute(
-    "data-bs-theme",
-    isDark.value ? "dark" : "light"
-  );
-}
+const isStayConnected = ref(false);
 
-/* Switchers */
 function switchToReset() {
   error.value = "";
   resetInfo.value = "";
@@ -252,18 +227,15 @@ function switchToLogin() {
   );
 }
 
-/* Login flow */
 async function verifyEmail() {
   error.value = "";
   if (!email.value) return;
-
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRe.test(email.value)) {
     error.value = "Please enter a valid e-mail format.";
     emailVerified.value = false;
     return;
   }
-
   checkingEmail.value = true;
   try {
     if (email.value.trim().toLowerCase() === DEMO_EMAIL) {
@@ -305,21 +277,17 @@ async function doLogin() {
   }
 }
 
-/* Reset flow (demo) */
 async function doReset() {
   error.value = "";
   resetInfo.value = "";
   if (!resetEmail.value) return;
-
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRe.test(resetEmail.value)) {
     error.value = "Please enter a valid e-mail format.";
     return;
   }
-
   resetting.value = true;
   try {
-    // DEMO: “mail gönderildi” info mesajı
     await new Promise((r) => setTimeout(r, 800));
     resetInfo.value =
       "If an account exists for this e-mail, a reset link has been sent.";
@@ -330,30 +298,23 @@ async function doReset() {
 </script>
 
 <style scoped>
-/* ===== Sayfa arka planı (resim) ===== */
+/* ===== Global background: beyaz + çok hafif görsel ===== */
 .login-wrap {
-  --bg: var(--bs-body-bg);
-  background: url("@/assets/1 1.jpg") center/cover no-repeat, var(--bg);
+  background-color: #fff;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.88),
+      rgba(255, 255, 255, 0.88)
+    ),
+    url("@/assets/1 1.jpg");
+  background-size: cover;
+  background-position: center;
   padding: 24px;
-}
-
-/* ===== Tema anahtarı ===== */
-.theme-toggle-btn {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  height: 36px;
-  width: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
 }
 
 /* ===== Kart ===== */
 .login-card {
   position: relative;
-  width: clamp(320px, 92vw, 760px);
+  width: clamp(360px, 92vw, 760px);
   height: clamp(560px, 80vh, 860px);
   border-radius: 28px;
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -362,25 +323,14 @@ async function doReset() {
   align-items: stretch;
   overflow: hidden;
 
-  /* Hafif saydam arka plan + gradient */
-  background: radial-gradient(
-      1200px 600px at 10% 5%,
-      rgba(13, 109, 253, 0.18),
-      transparent 60%
-    ),
-    radial-gradient(
-      900px 600px at 90% 105%,
-      rgba(111, 66, 193, 0.18),
-      transparent 60%
-    ),
-    rgba(255, 255, 255, 0.85); /* Açık temada hafif saydam beyaz */
-  backdrop-filter: blur(8px); /* Arka planı hafif flu yapar */
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
 }
 .shadow-apple {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 40px 120px rgba(0, 0, 0, 0.12);
 }
 
-/* ===== İç kolon: üst ve altı ayır ===== */
+/* ===== İç kolon ===== */
 .content-col {
   display: flex;
   flex-direction: column;
@@ -388,13 +338,11 @@ async function doReset() {
   min-height: 100%;
 }
 
-/* ===== ÜST BLOK — LOGO ÜSTTE, FORM ORTADA ===== */
+/* ===== ÜST BLOK ===== */
 .top-block {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  margin: 0;
-  padding: 0;
 }
 .logo-container {
   display: flex;
@@ -407,47 +355,45 @@ async function doReset() {
   object-fit: contain;
 }
 
-/* ===== Hata mesajı ===== */
+/* ===== Hata / Bilgi ===== */
 .error-row {
   min-height: 20px;
   text-align: center;
   color: #dc3545;
   visibility: hidden;
-  margin-bottom: 12px;
-  margin-top: auto;
+  margin: 8px 0 12px 0;
 }
 .error-row.show {
   visibility: visible;
 }
 
-/* Form blokları */
+/* ===== Formlar ===== */
 .form-stack {
   display: grid;
-  gap: 12px;
-  margin-bottom: auto;
+  gap: 15px;
   width: 100%;
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Reset başlık ve buton link stili */
+:root {
+  --row-h: clamp(48px, 6.4vh, 56px);
+  --heading-h: clamp(28px, 4vh, 32px);
+}
+.field {
+  display: block;
+}
+.heading-spacer {
+  height: var(--heading-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .reset-title {
   font-weight: 600;
   font-size: clamp(1rem, 1.6vw, 1.125rem);
   text-align: center;
-}
-.reset-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-:root {
-  --row-h: clamp(48px, 6.4vh, 56px);
-}
-.field {
-  display: block;
 }
 .field--reserve {
   height: var(--row-h);
@@ -458,6 +404,7 @@ async function doReset() {
   display: flex;
   align-items: center;
 }
+
 .password-slot {
   opacity: 0;
   visibility: hidden;
@@ -496,32 +443,62 @@ async function doReset() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--bs-secondary-color, #6c757d);
+  color: #6c757d;
 }
 .icon-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .icon-btn:hover:not(:disabled) {
-  color: var(--bs-primary, #0d6efd);
+  color: #0d6efd;
+}
+
+/* ===== Aksiyon satırı: 20px yukarı ve hizalı ===== */
+.reset-actions {
+  margin-top: -20px; /* 20px yukarı taşı */
+  display: flex;
+  align-items: center; /* e-mail input yüksekliğiyle hizala */
+  justify-content: space-between; /* solda link, sağda buton */
+  min-height: var(--row-h); /* input satırıyla aynı yükseklik */
 }
 
 /* ===== ALT BLOK ===== */
 .extras {
   flex: 0 0 auto;
-  margin-top: 0;
   padding-top: clamp(12px, 2.4vh, 24px);
-  padding-bottom: 0;
   text-align: center;
 }
 .stay {
-  color: var(--bs-secondary-color);
+  color: #6c757d;
   font-size: 0.95rem;
   margin-bottom: 10px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
+
+/* Checkbox stili (tik siyah) */
+.form-check-input {
+  width: 1.05rem;
+  height: 1.05rem;
+  appearance: none;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+.form-check-input:hover {
+  border-color: #0d6efd;
+}
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3E%3Cpath d='M13.854 3.646a.5.5 0 0 1 0 .708L6.707 11.5 3.146 7.854a.5.5 0 1 1 .708-.708L6.707 10.293l6.439-6.647a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0.7rem 0.7rem;
+}
+
 .links {
   display: flex;
   gap: 16px;
@@ -549,23 +526,6 @@ async function doReset() {
   text-decoration: underline;
 }
 
-/* ===== Dark mode ===== */
-:root[data-bs-theme="dark"] .login-card {
-  background: radial-gradient(
-      1200px 600px at 10% 5%,
-      rgba(13, 109, 253, 0.18),
-      transparent 60%
-    ),
-    radial-gradient(
-      900px 600px at 90% 105%,
-      rgba(111, 66, 193, 0.18),
-      transparent 60%
-    ),
-    rgba(33, 37, 41, 0.85); /* koyu saydam */
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
   .login-card {
@@ -576,15 +536,6 @@ async function doReset() {
   }
   .logo-img {
     width: min(280px, 82%);
-  }
-  .theme-toggle-btn {
-    top: 12px;
-    right: 12px;
-    height: 34px;
-    width: 34px;
-  }
-  .links {
-    gap: 12px;
   }
 }
 @media (max-width: 380px) {
@@ -599,5 +550,13 @@ async function doReset() {
   .icon-btn {
     right: 6px;
   }
+  .reset-actions {
+    margin-top: -12px;
+    min-height: 46px;
+  } /* çok küçük ekran ayarı */
+}
+.send-reset-btn {
+  padding: 8px 16px;
+  margin-left: 4px; /* hafif kaydırma */
 }
 </style>

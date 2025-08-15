@@ -30,14 +30,7 @@
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
-        <RouterLink
-          :to="{ name: 'settings', query: { tab: 'management' } }"
-          class="nav-link sidebar-link"
-          :class="{
-            'router-link-exact-active':
-              $route.name === 'settings' && $route.query.tab === 'management',
-          }"
-        >
+        <RouterLink to="/settings?tab=management" class="nav-link sidebar-link">
           <Users class="me-2 icon" /> Management
         </RouterLink>
       </nav>
@@ -95,15 +88,9 @@
           >📄 Invoices
         </RouterLink>
         <RouterLink
-          :to="{ name: 'settings', query: { tab: 'management' } }"
-          class="nav-link text-white fs-5 mb-3"
-          :class="{
-            'router-link-exact-active':
-              $route.name === 'settings' && $route.query.tab === 'management',
-          }"
-          @click="$emit('closeSidebar')"
-        >
-          👥 Management
+          :to="{ name: 'management' }"
+          :class="{ active: $route.name === 'management' }"
+          >👥 Management
         </RouterLink>
       </div>
     </div>

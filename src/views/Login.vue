@@ -323,9 +323,10 @@ async function doReset() {
   align-items: stretch;
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.7);
+  /* %85 opak arka plan */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
 }
-
 .shadow-apple {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 40px 120px rgba(0, 0, 0, 0.12);
 }
@@ -376,7 +377,9 @@ async function doReset() {
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 110px; /* logo ile form arasındaki mesafeyi arttırır */
+
+  /* Logo ile form arası: responsive boşluk */
+  margin-top: clamp(40px, 8vh, 110px);
 }
 
 :root {
@@ -455,13 +458,13 @@ async function doReset() {
   color: #0d6efd;
 }
 
-/* ===== Aksiyon satırı: 20px yukarı ve hizalı ===== */
+/* ===== Reset aksiyonları ===== */
 .reset-actions {
-  margin-top: -20px; /* 20px yukarı taşı */
+  margin-top: -20px; /* e-mail satırına yaklaşsın */
   display: flex;
-  align-items: center; /* e-mail input yüksekliğiyle hizala */
+  align-items: center;
   justify-content: space-between; /* solda link, sağda buton */
-  min-height: var(--row-h); /* input satırıyla aynı yükseklik */
+  min-height: var(--row-h);
 }
 
 /* ===== ALT BLOK ===== */
@@ -501,6 +504,7 @@ async function doReset() {
   background-size: 0.7rem 0.7rem;
 }
 
+/* Linkler */
 .links {
   display: flex;
   gap: 16px;
@@ -537,10 +541,15 @@ async function doReset() {
     border-radius: 22px;
   }
   .logo-img {
-    width: min(280px, 82%);
-    margin-top: clamp(40px, 8vh, 110px);
+    width: min(200px, 82%);
+    margin-bottom: 10px;
+  }
+  .form-stack {
+    /* Mobilde daha kompakt boşluk */
+    margin-top: clamp(24px, 6vh, 60px);
   }
 }
+
 @media (max-width: 380px) {
   .login-card {
     width: 94vw;
@@ -556,10 +565,16 @@ async function doReset() {
   .reset-actions {
     margin-top: -12px;
     min-height: 46px;
-  } /* çok küçük ekran ayarı */
+  }
 }
+
+/* Ek buton ayarı (gerekirse) */
 .send-reset-btn {
   padding: 8px 16px;
-  margin-left: 4px; /* hafif kaydırma */
+  margin-left: 4px;
+}
+
+.form-stack input[type="email"] {
+  margin-top: 30px !important;
 }
 </style>

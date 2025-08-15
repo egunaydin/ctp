@@ -323,9 +323,9 @@ async function doReset() {
   align-items: stretch;
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.45);
 }
+
 .shadow-apple {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 40px 120px rgba(0, 0, 0, 0.12);
 }

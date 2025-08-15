@@ -323,7 +323,7 @@ async function doReset() {
   align-items: stretch;
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .shadow-apple {
@@ -344,13 +344,14 @@ async function doReset() {
   display: flex;
   flex-direction: column;
 }
+
 .logo-container {
   display: flex;
   justify-content: center;
   margin: 0 0 clamp(16px, 2.8vh, 24px) 0;
 }
 .logo-img {
-  width: min(360px, 80%);
+  width: min(200px, 80%);
   height: auto;
   object-fit: contain;
 }
@@ -375,6 +376,7 @@ async function doReset() {
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 110px; /* logo ile form arasındaki mesafeyi arttırır */
 }
 
 :root {
@@ -536,6 +538,7 @@ async function doReset() {
   }
   .logo-img {
     width: min(280px, 82%);
+    margin-bottom: 110px;
   }
 }
 @media (max-width: 380px) {

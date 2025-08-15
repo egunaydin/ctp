@@ -575,6 +575,6 @@ async function doReset() {
 }
 
 .form-stack input[type="email"] {
-  margin-top: 30px !important;
+  margin-top: 45px !important;
 }
 </style>

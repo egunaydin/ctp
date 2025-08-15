@@ -30,12 +30,6 @@
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
-        <RouterLink to="/analytics" class="nav-link sidebar-link">
-          <BarChart class="me-2 icon" /> Analytics
-        </RouterLink>
-        <RouterLink to="/management" class="nav-link sidebar-link">
-          <Users class="me-2 icon" /> Management
-        </RouterLink>
       </nav>
 
       <!-- Kullanıcı Kutusu -->

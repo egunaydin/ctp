@@ -24,13 +24,23 @@
         <RouterLink to="/dashboard" class="nav-link sidebar-link">
           <LayoutDashboard class="me-2 icon" /> Orders
         </RouterLink>
+
         <RouterLink to="/tracking" class="nav-link sidebar-link">
           <Map class="me-2 icon" /> Tracking
         </RouterLink>
+
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
-        <RouterLink to="/settings?tab=management" class="nav-link sidebar-link">
+
+        <!-- Management: sadece tab=management iken highlight -->
+        <RouterLink
+          :to="{ name: 'settings', query: { tab: 'management' } }"
+          class="nav-link sidebar-link"
+          :class="{ 'is-active': isManagementActive }"
+          active-class=""
+          exact-active-class=""
+        >
           <Users class="me-2 icon" /> Management
         </RouterLink>
       </nav>
@@ -71,26 +81,38 @@
         <!-- Menü Linkleri -->
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
-          to="/"
+          to="/dashboard"
           @click="$emit('closeSidebar')"
-          >🏠 Orders
+        >
+          🏠 Orders
         </RouterLink>
+
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
           to="/tracking"
           @click="$emit('closeSidebar')"
-          >📍 Tracking
+        >
+          📍 Tracking
         </RouterLink>
+
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
           to="/invoices"
           @click="$emit('closeSidebar')"
-          >📄 Invoices
+        >
+          📄 Invoices
         </RouterLink>
+
+        <!-- Management (mobil) -->
         <RouterLink
-          :to="{ name: 'management' }"
-          :class="{ active: $route.name === 'management' }"
-          >👥 Management
+          :to="{ name: 'settings', query: { tab: 'management' } }"
+          class="nav-link text-white fs-5 mb-3"
+          :class="{ 'is-active': isManagementActive }"
+          active-class=""
+          exact-active-class=""
+          @click="$emit('closeSidebar')"
+        >
+          👥 Management
         </RouterLink>
       </div>
     </div>
@@ -99,15 +121,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { RouterLink } from "vue-router";
-import {
-  LayoutDashboard,
-  Map,
-  FileText,
-  BarChart,
-  Users,
-  Menu,
-} from "lucide-vue-next";
+import { useRoute, RouterLink } from "vue-router";
+import { LayoutDashboard, Map, FileText, Users, Menu } from "lucide-vue-next";
 
 const props = defineProps<{
   isMenuOpen: boolean;
@@ -117,9 +132,19 @@ const props = defineProps<{
 
 defineEmits(["closeSidebar"]);
 
-const isMobile = ref(window.innerWidth < 768);
+const route = useRoute();
+
+/** Sadece settings?tab=management iken true */
+const isManagementActive = computed(
+  () => route.name === "settings" && route.query.tab === "management"
+);
+
+const isMobile = ref(false);
 const onResize = () => (isMobile.value = window.innerWidth < 768);
-onMounted(() => window.addEventListener("resize", onResize));
+onMounted(() => {
+  onResize();
+  window.addEventListener("resize", onResize);
+});
 onBeforeUnmount(() => window.removeEventListener("resize", onResize));
 
 const displayName = computed(() => props.userName?.trim() || "Sinem BAHAR");
@@ -150,7 +175,15 @@ const initials = computed(() => getInitials(displayName.value));
 .sidebar-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+/* Varsayılan exact-active (Orders/Tracking/Invoices için) */
 .router-link-exact-active.sidebar-link {
+  background-color: #fff;
+  color: #0d6efd;
+}
+
+/* Management için kendi aktif sınıfımız */
+.sidebar-link.is-active {
   background-color: #fff;
   color: #0d6efd;
 }
@@ -164,9 +197,9 @@ const initials = computed(() => getInitials(displayName.value));
 
 /* Daha okunaklı avatar */
 .avatar-initials {
-  --avatar-bg: #1f2630; /* koyu, düz zemin */
-  --avatar-border: #ffffffe6; /* parlak beyaz kenar */
-  --avatar-ring: rgba(0, 0, 0, 0.45); /* dış halka gölgesi */
+  --avatar-bg: #1f2630;
+  --avatar-border: #ffffffe6;
+  --avatar-ring: rgba(0, 0, 0, 0.45);
 
   width: 56px;
   height: 56px;
@@ -178,14 +211,13 @@ const initials = computed(() => getInitials(displayName.value));
     ),
     var(--avatar-bg);
   border: 2px solid var(--avatar-border);
-  box-shadow: 0 2px 10px var(--avatar-ring),
-    /* dış gölge */ 0 0 0 3px rgba(255, 255, 255, 0.08); /* yumuşak dış halka */
+  box-shadow: 0 2px 10px var(--avatar-ring), 0 0 0 3px rgba(255, 255, 255, 0.08);
 
   color: #fff;
   font-weight: 800;
   font-size: 18px;
   letter-spacing: 0.3px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); /* beyaz harfe kontrast */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 
   display: flex;
   align-items: center;

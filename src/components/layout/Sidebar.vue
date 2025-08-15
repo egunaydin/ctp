@@ -30,6 +30,16 @@
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
+        <RouterLink
+          :to="{ name: 'settings', query: { tab: 'management' } }"
+          class="nav-link sidebar-link"
+          :class="{
+            'router-link-exact-active':
+              $route.name === 'settings' && $route.query.tab === 'management',
+          }"
+        >
+          <Users class="me-2 icon" /> Management
+        </RouterLink>
       </nav>
 
       <!-- Kullanıcı Kutusu -->
@@ -70,32 +80,31 @@
           class="nav-link text-white fs-5 mb-3"
           to="/"
           @click="$emit('closeSidebar')"
-          >🏠 Orders</RouterLink
-        >
+          >🏠 Orders
+        </RouterLink>
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
           to="/tracking"
           @click="$emit('closeSidebar')"
-          >📍 Tracking</RouterLink
-        >
+          >📍 Tracking
+        </RouterLink>
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
           to="/invoices"
           @click="$emit('closeSidebar')"
-          >📄 Invoices</RouterLink
-        >
+          >📄 Invoices
+        </RouterLink>
         <RouterLink
+          :to="{ name: 'settings', query: { tab: 'management' } }"
           class="nav-link text-white fs-5 mb-3"
-          to="/analytics"
+          :class="{
+            'router-link-exact-active':
+              $route.name === 'settings' && $route.query.tab === 'management',
+          }"
           @click="$emit('closeSidebar')"
-          >📊 Analytics</RouterLink
         >
-        <RouterLink
-          class="nav-link text-white fs-5 mb-3"
-          to="/management"
-          @click="$emit('closeSidebar')"
-          >👥 Management</RouterLink
-        >
+          👥 Management
+        </RouterLink>
       </div>
     </div>
   </div>

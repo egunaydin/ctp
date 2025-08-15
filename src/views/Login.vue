@@ -538,7 +538,7 @@ async function doReset() {
   }
   .logo-img {
     width: min(280px, 82%);
-    margin-bottom: 110px;
+    margin-top: clamp(40px, 8vh, 110px);
   }
 }
 @media (max-width: 380px) {

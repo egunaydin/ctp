@@ -1,6 +1,6 @@
 [build]
-  command = "npm install --no-audit --no-fund --legacy-peer-deps && npm run build"
-  publish = "dist"
+command = "rm -rf node_modules package-lock.json && npm install --no-audit --no-fund --legacy-peer-deps && npm run build"
+publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+NODE_VERSION = "20"

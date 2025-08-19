@@ -21,19 +21,27 @@
 
       <!-- Menü -->
       <nav class="flex-grow-1 d-flex flex-column gap-2">
+        <!-- Dashboard -->
         <RouterLink to="/dashboard" class="nav-link sidebar-link">
-          <LayoutDashboard class="me-2 icon" /> Orders
+          <LayoutDashboard class="me-2 icon" /> Dashboard
         </RouterLink>
 
+        <!-- Dashboard -->
+        <RouterLink to="/orders" class="nav-link sidebar-link">
+          <Package class="me-2 icon" /> Orders
+        </RouterLink>
+
+        <!-- Tracking -->
         <RouterLink to="/tracking" class="nav-link sidebar-link">
           <Map class="me-2 icon" /> Tracking
         </RouterLink>
 
+        <!-- Invoices -->
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
 
-        <!-- Management: sadece tab=management iken highlight -->
+        <!-- Management -->
         <RouterLink
           :to="{ name: 'settings', query: { tab: 'management' } }"
           class="nav-link sidebar-link"
@@ -44,6 +52,17 @@
           <Users class="me-2 icon" /> Management
         </RouterLink>
       </nav>
+
+      <!-- Management: sadece tab=management iken highlight -->
+      <RouterLink
+        :to="{ name: 'settings', query: { tab: 'management' } }"
+        class="nav-link sidebar-link"
+        :class="{ 'is-active': isManagementActive }"
+        active-class=""
+        exact-active-class=""
+      >
+        <Users class="me-2 icon" /> Management
+      </RouterLink>
 
       <!-- Kullanıcı Kutusu -->
       <div
@@ -84,7 +103,15 @@
           to="/dashboard"
           @click="$emit('closeSidebar')"
         >
-          🏠 Orders
+          🏠 Dashboard
+        </RouterLink>
+
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/orders"
+          @click="$emit('closeSidebar')"
+        >
+          🗺️ Orders
         </RouterLink>
 
         <RouterLink
@@ -122,7 +149,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, RouterLink } from "vue-router";
-import { LayoutDashboard, Map, FileText, Users, Menu } from "lucide-vue-next";
+import {
+  LayoutDashboard,
+  Map,
+  FileText,
+  Users,
+  Menu,
+  Package,
+  Package2,
+  Package2Icon,
+} from "lucide-vue-next";
 
 const props = defineProps<{
   isMenuOpen: boolean;

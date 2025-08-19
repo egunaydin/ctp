@@ -53,7 +53,7 @@
       </button>
     </div>
 
-    <!-- OVERVIEW: Small top statistic cards -->
+    <!-- OVERVIEW -->
     <div class="card shadow-sm border mb-1">
       <div class="card-body">
         <div class="row g-1">
@@ -103,7 +103,7 @@
       </div>
     </div>
 
-    <!-- PAYMENT HISTORY: List of invoices with collapsible details -->
+    <!-- PAYMENT HISTORY -->
     <div class="card shadow-sm border">
       <div class="card-body pb-2">
         <div class="fw-semibold py-1">Payment History</div>
@@ -115,7 +115,6 @@
             :key="inv.id"
             class="list-group-item invoice-row border rounded-3 px-3 py-2 mb-2"
           >
-            <!-- = Row content = -->
             <div class="row g-2 align-items-center">
               <!-- Left: Avatar + Client Name + Tag -->
               <div class="col-12 col-md-4 d-flex align-items-center gap-3">
@@ -176,7 +175,6 @@
             <!-- = Collapsible details = -->
             <div class="collapse mt-3" :id="'d' + idx">
               <div class="row g-3">
-                <!-- Left: Billing plan list -->
                 <div class="col-12 col-lg-7">
                   <div class="rounded-3 p-3 border bg-body-tertiary">
                     <div class="small text-muted mb-2">Billing plan</div>
@@ -185,8 +183,6 @@
                     </ul>
                   </div>
                 </div>
-
-                <!-- Right: Key invoice info -->
                 <div class="col-12 col-lg-5">
                   <div class="rounded-3 p-3 border bg-body-tertiary">
                     <div class="row small g-2">

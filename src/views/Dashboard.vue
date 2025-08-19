@@ -3,8 +3,6 @@
     <div class="toolbar">
       <button class="btn" @click="fitAll">Tümünü Göster</button>
     </div>
-
-    <!-- Overlay haritanın içinde -->
     <div class="map" ref="mapEl">
       <div v-if="loading" class="loading">
         <div class="spinner"></div>
@@ -18,7 +16,6 @@
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import L from "leaflet";
 
-/* -------------------- Tipler -------------------- */
 type LatLng = { lat: number; lng: number };
 type Place = LatLng & { name: string };
 type Vehicle = LatLng & { plate: string; driver?: string; speedKph?: number };
@@ -34,7 +31,6 @@ type Order = {
 };
 type OrderWithProgress = Order & { progress: number };
 
-/* -------------------- Veri -------------------- */
 const TR: Record<string, LatLng> = {
   "İstanbul (Hadımköy)": { lat: 41.112, lng: 28.683 },
   "Kocaeli (Gebze)": { lat: 40.802, lng: 29.438 },
@@ -163,7 +159,6 @@ const orders: OrderWithProgress[] = [
   },
 ];
 
-/* -------------------- Yardımcılar -------------------- */
 const mapEl = ref<HTMLDivElement | null>(null);
 let map: L.Map | null = null;
 let overlay: L.LayerGroup | null = null;
@@ -181,7 +176,6 @@ const colorByStatus = (s: Status) =>
     ? "#6c757d"
     : "#dc3545";
 
-/* Arkaplansız emoji icon */
 const icon = (emoji: string) =>
   L.divIcon({
     html: `<div class="pin">${emoji}</div>`,
@@ -190,7 +184,6 @@ const icon = (emoji: string) =>
     iconAnchor: [18, 18],
   });
 
-/* OSRM – yola oturan rota */
 async function roadRoute(points: [number, number][]) {
   const coordStr = points.map(([lat, lng]) => `${lng},${lat}`).join(";");
   const url = `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`;
@@ -203,7 +196,6 @@ async function roadRoute(points: [number, number][]) {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/* Polyline üzerinde yüzde konum */
 function interpolatePoint(
   path: [number, number][],
   t: number
@@ -234,7 +226,6 @@ function interpolatePoint(
   return path[path.length - 1];
 }
 
-/* Rota + marker odak davranışı */
 function attachFocusBehavior(opts: {
   past: L.Polyline;
   future: L.Polyline;
@@ -266,7 +257,6 @@ function attachFocusBehavior(opts: {
   });
 }
 
-/* -------------------- Çizim -------------------- */
 async function drawAll() {
   if (!map) return;
   loading.value = true;
@@ -296,7 +286,6 @@ async function drawAll() {
       const past = snapped.slice(0, vi + 1);
       const future = snapped.slice(vi);
 
-      // Kontrast için beyaz alt çizgiler
       L.polyline(past, {
         color: "#fff",
         weight: 8,
@@ -310,7 +299,6 @@ async function drawAll() {
         lineCap: "round",
       }).addTo(overlay);
 
-      // Üst renkli çizgiler
       const pastLine = L.polyline(past, {
         color,
         weight: 5,
@@ -325,7 +313,6 @@ async function drawAll() {
         lineCap: "round",
       }).addTo(overlay);
 
-      // Markerlar
       const mOrigin = L.marker([o.origin.lat, o.origin.lng], {
         icon: icon("📦"),
       }).addTo(overlay);
@@ -415,7 +402,6 @@ function fitAll() {
   map.fitBounds(L.latLngBounds(pts), { padding: [50, 50] });
 }
 
-/* -------------------- Lifecycle -------------------- */
 onMounted(() => {
   if (!mapEl.value) return;
   const osm = L.tileLayer(
@@ -471,7 +457,6 @@ onBeforeUnmount(() => {
   background: #f6f8fa;
 }
 
-/* Harita kutusu relative — overlay için */
 .map {
   position: relative;
   width: 100%;
@@ -490,21 +475,20 @@ onBeforeUnmount(() => {
   line-height: 1;
 }
 
-/* Yükleniyor overlay: ortalı + yüksek z-index */
 .loading {
   position: absolute;
   inset: 0;
-  display: flex; /* ← grid yerine flex */
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* tam ortalama */
+  justify-content: center;
   gap: 10px;
   text-align: center;
   background: rgba(58, 58, 58, 0.379);
   color: #222; /* daha koyu ve net */
   font-weight: 700;
-  z-index: 9999; /* Leaflet katmanlarının üstünde */
-  pointer-events: none; /* sadece haritayı tıklanamaz yapma, çevreye engel olmaz */
+  z-index: 9999;
+  pointer-events: none;
 }
 
 .spinner {

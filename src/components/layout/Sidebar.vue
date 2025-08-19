@@ -48,17 +48,6 @@
         </RouterLink>
       </nav>
 
-      <!-- Management: sadece tab=management iken highlight -->
-      <RouterLink
-        :to="{ name: 'settings', query: { tab: 'management' } }"
-        class="nav-link sidebar-link"
-        :class="{ 'is-active': isManagementActive }"
-        active-class=""
-        exact-active-class=""
-      >
-        <Users class="me-2 icon" /> Management
-      </RouterLink>
-
       <!-- Kullanıcı Kutusu -->
       <div
         class="user-card bg-white bg-opacity-25 rounded-4 text-white p-3 mt-4"

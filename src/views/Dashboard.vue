@@ -460,7 +460,7 @@ onBeforeUnmount(() => {
 .map {
   position: relative;
   width: 100%;
-  min-height: calc(89vh - 120px);
+  min-height: calc(98vh - 125px);
   border-radius: 8px;
   overflow: hidden;
 }

@@ -265,7 +265,7 @@ async function doLogin() {
   try {
     if (password.value === DEMO_PASS) {
       localStorage.setItem("auth", "1");
-      const target = (route.query.redirect as string) || "/dashboard";
+      const target = (route.query.redirect as string) || "/orders";
       await router.replace(target);
     } else {
       error.value = "Invalid password.";
@@ -362,7 +362,7 @@ async function doReset() {
   font-size: clamp(1.3rem, 2.6vw, 1.75rem);
   font-weight: 650;
   letter-spacing: 0.2px;
-  margin-bottom: 90px;
+  margin-bottom: 80px;
   color: #000;
 }
 

@@ -1,595 +1,531 @@
 <template>
-  <div class="container-fluid py-2">
-    <!-- Header Cards Ensar -->
-    <div class="row g-3 mb-3">
-      <div
-        class="col-12 col-sm-6 col-lg-3"
-        v-for="(card, index) in statsCardsWithTotal"
-        :key="index"
-      >
-        <div class="card p-3 shadow-sm h-100">
-          <h6 class="text-muted">{{ card.title }}</h6>
-          <h4>{{ card.value }}</h4>
-          <small class="text-muted">{{ card.subtitle }}</small>
-
-          <div v-if="card.title === 'Total Shipments'" class="mt-1">
-            <div v-for="(label, key, idx) in badgeData" :key="idx" class="mb-1">
-              <div class="d-flex justify-content-between align-items-center">
-                <small :class="`text-${label.color}`"
-                  ><i :class="`bi ${label.icon}`"></i> {{ key }}</small
-                >
-                <small>{{ label.count }}</small>
-              </div>
-              <div class="progress mb-0" style="height: 4px">
-                <div
-                  class="progress-bar"
-                  :class="`bg-${label.color}`"
-                  role="progressbar"
-                  :style="{
-                    width: (label.count / shipments.length) * 130 + '%',
-                  }"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="orders-page">
+    <div class="toolbar">
+      <button class="btn" @click="fitAll">Tümünü Göster</button>
     </div>
 
-    <!-- ONE BOX: Search + Filters + Table + Pagination -->
-    <div class="card shadow-sm">
-      <!-- Search + quick buttons -->
-      <div class="p-3 pb-0">
-        <div class="row g-2 align-items-center">
-          <div class="col-12 col-lg">
-            <input
-              v-model="search"
-              type="text"
-              class="form-control"
-              placeholder="Search shipments by Nº, tracking number, customer, or location..."
-            />
-          </div>
-          <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-2">
-            <button
-              class="btn btn-outline-secondary d-flex align-items-center"
-              @click="filtersVisible = !filtersVisible"
-            >
-              <i class="bi bi-funnel-fill me-1"></i> Filters
-            </button>
-            <button class="btn btn-outline-secondary d-flex align-items-center">
-              <i class="bi bi-download me-1"></i> Export
-            </button>
-          </div>
-        </div>
-
-        <!-- Advanced Filters -->
-        <div class="row mt-3 g-2" v-if="filtersVisible">
-          <div class="col-sm-6 col-md">
-            <select v-model="filters.status" class="form-select">
-              <option value="">All Statuses</option>
-              <option>Shipping</option>
-              <option>Shipped</option>
-              <option>Planned</option>
-              <option>Canceled</option>
-              <option>Warning</option>
-            </select>
-          </div>
-          <div class="col-sm-6 col-md">
-            <select v-model="filters.type" class="form-select">
-              <option value="">All Types</option>
-              <option>DAP</option>
-              <option>DAT</option>
-              <option>CIP</option>
-            </select>
-          </div>
-          <div class="col-sm-6 col-md">
-            <select v-model="filters.priority" class="form-select">
-              <option value="">All Priorities</option>
-              <option>Standard</option>
-              <option>Express</option>
-              <option>Economy</option>
-            </select>
-          </div>
-          <div class="col-sm-6 col-md">
-            <select v-model="filters.carrier" class="form-select">
-              <option value="">All Carriers</option>
-              <option>Carrier X</option>
-              <option>Carrier Y</option>
-            </select>
-          </div>
-          <div class="col-sm-6 col-md">
-            <input type="date" class="form-control" v-model="filters.date" />
-          </div>
-        </div>
+    <!-- Overlay haritanın içinde -->
+    <div class="map" ref="mapEl">
+      <div v-if="loading" class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Rotalar hesaplanıyor…</div>
       </div>
-
-      <hr class="my-3 border-subtle" />
-
-      <!-- Table -->
-      <div class="table-responsive-sm px-3">
-        <table class="table table-hover mb-0">
-          <thead class="table-light">
-            <tr>
-              <th style="width: 32px">
-                <input type="checkbox" @change="toggleAll($event)" />
-              </th>
-              <th>Order Nº</th>
-              <th>Origin</th>
-              <th>Destination</th>
-              <th>Departure</th>
-              <th>ETA</th>
-              <th>Status</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="shipment in paginatedShipments" :key="shipment.id">
-              <td>
-                <input
-                  type="checkbox"
-                  :value="shipment.id"
-                  v-model="selectedShipments"
-                />
-              </td>
-              <td>{{ shipment.title }}</td>
-              <td>{{ shipment.from }}</td>
-              <td>{{ shipment.to }}</td>
-              <td>{{ shipment.startDate }}</td>
-              <td>{{ shipment.endDate }}</td>
-              <td>
-                <span
-                  class="badge"
-                  :class="statusBadgeClass(shipment.status)"
-                  >{{ shipment.status }}</span
-                >
-              </td>
-              <td>{{ shipment.transportType }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center p-3 pt-2">
-        <small>
-          Showing {{ startIndex + 1 }} to {{ endIndex }} of
-          {{ filteredShipments.length }} shipments
-          <span class="ms-2">• Page {{ currentPage }} / {{ totalPages }}</span>
-        </small>
-        <div>
-          <button
-            class="btn btn-outline-secondary btn-sm me-2"
-            @click="previousPage"
-            :disabled="currentPage === 1"
-          >
-            Previous
-          </button>
-          <span class="btn btn-dark btn-sm">{{ currentPage }}</span>
-          <button
-            class="btn btn-outline-secondary btn-sm ms-2"
-            @click="nextPage"
-            :disabled="currentPage >= totalPages"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Action Bar -->
-    <div
-      v-if="selectedShipments.length > 0"
-      class="action-bar position-fixed bottom-0 start-50 translate-middle-x rounded-top shadow-lg px-4 py-3 d-flex align-items-center gap-3 border"
-      style="z-index: 1070; width: auto; max-width: 95%; bottom: 2vh"
-    >
-      <span class="me-2"
-        >{{ selectedShipments.length }} shipments selected</span
-      >
-      <button class="btn btn-outline-secondary btn-sm">Clear</button>
-      <button class="btn btn-outline-secondary btn-sm">Print</button>
-      <button class="btn btn-outline-secondary btn-sm">Export</button>
-      <button class="btn btn-outline-secondary btn-sm">Edit</button>
-      <button class="btn btn-danger btn-sm">Delete</button>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, watch } from "vue";
+<script setup lang="ts">
+import { onMounted, onBeforeUnmount, ref } from "vue";
+import L from "leaflet";
 
-const filtersVisible = ref(false);
-const search = ref("");
-const currentPage = ref(1);
-const perPage = 5; // Daha fazla sayfa görmek için 3 yapabilir veya daha çok kayıt ekleyebilirsin.
+/* -------------------- Tipler -------------------- */
+type LatLng = { lat: number; lng: number };
+type Place = LatLng & { name: string };
+type Vehicle = LatLng & { plate: string; driver?: string; speedKph?: number };
+type Status = "Planned" | "Shipping" | "Warning" | "Shipped" | "Canceled";
+type Order = {
+  id: string;
+  title: string;
+  status: Status;
+  origin: Place;
+  destination: Place;
+  vehicle: Vehicle;
+  meta: { startDate: string; endDate: string; transportType: string };
+};
+type OrderWithProgress = Order & { progress: number };
 
-const selectedShipments = ref([]);
+/* -------------------- Veri -------------------- */
+const TR: Record<string, LatLng> = {
+  "İstanbul (Hadımköy)": { lat: 41.112, lng: 28.683 },
+  "Kocaeli (Gebze)": { lat: 40.802, lng: 29.438 },
+  "Bursa (Nilüfer)": { lat: 40.232, lng: 28.889 },
+  "İzmir (Kemalpaşa)": { lat: 38.436, lng: 27.428 },
+  "Ankara (Sincan)": { lat: 39.958, lng: 32.584 },
+  "Mersin (Tarsus)": { lat: 36.917, lng: 34.895 },
+  "Adana (Hacı Sabancı)": { lat: 37.0, lng: 35.321 },
+  "Antalya (Döşemealtı)": { lat: 36.975, lng: 30.65 },
+  "Gaziantep (Başpınar)": { lat: 37.069, lng: 37.379 },
+  "Samsun (Tekkeköy)": { lat: 41.199, lng: 36.497 },
+  Trabzon: { lat: 41.002, lng: 39.717 },
+  Erzurum: { lat: 39.905, lng: 41.265 },
+  Malatya: { lat: 38.355, lng: 38.333 },
+  Diyarbakır: { lat: 37.915, lng: 40.23 },
+  Şanlıurfa: { lat: 37.16, lng: 38.795 },
+  Kayseri: { lat: 38.731, lng: 35.478 },
+  Konya: { lat: 37.871, lng: 32.484 },
+  Eskişehir: { lat: 39.779, lng: 30.52 },
+  Denizli: { lat: 37.776, lng: 29.086 },
+  Muğla: { lat: 37.214, lng: 28.363 },
+  Hatay: { lat: 36.204, lng: 36.154 },
+  Zonguldak: { lat: 41.456, lng: 31.798 },
+};
 
-const filters = ref({
-  status: "",
-  type: "",
-  priority: "",
-  carrier: "",
-  date: "",
-});
-
-const shipments = ref([
+const orders: OrderWithProgress[] = [
   {
-    id: 1,
-    title: "2098 1178 9110",
+    id: "AL-TR-0001",
+    title: "Order Nº AL-TR-0001",
     status: "Shipping",
-    progress: 67,
-    from: "Florida",
-    to: "Washington",
-    startDate: "05.12.2020",
-    endDate: "17.12.2020",
-    prepaid: true,
-    transportType: "DAP",
-    daysUsed: 8,
-    totalDays: 12,
+    origin: { ...TR["İstanbul (Hadımköy)"], name: "İstanbul (Hadımköy) Depo" },
+    destination: { ...TR.Trabzon, name: "Trabzon Müşteri" },
+    vehicle: {
+      lat: 0,
+      lng: 0,
+      plate: "34 AL 001",
+      driver: "M. Kaya",
+      speedKph: 82,
+    },
+    meta: {
+      startDate: "01.09.2025",
+      endDate: "03.09.2025",
+      transportType: "DAP",
+    },
+    progress: 0.55,
   },
   {
-    id: 2,
-    title: "2341 2312 3143",
+    id: "AL-TR-0002",
+    title: "Order Nº AL-TR-0002",
     status: "Planned",
-    progress: 0,
-    from: "Oregon",
-    to: "Maine",
-    startDate: "12.12.2020",
-    endDate: "24.12.2020",
-    prepaid: true,
-    transportType: "DAT",
-    daysUsed: 0,
-    totalDays: 20,
+    origin: { ...TR["Kocaeli (Gebze)"], name: "Kocaeli (Gebze) Depo" },
+    destination: { ...TR.Erzurum, name: "Erzurum Müşteri" },
+    vehicle: {
+      lat: 0,
+      lng: 0,
+      plate: "41 AL 002",
+      driver: "E. Demir",
+      speedKph: 0,
+    },
+    meta: {
+      startDate: "02.09.2025",
+      endDate: "05.09.2025",
+      transportType: "DAT",
+    },
+    progress: 0.0,
   },
   {
-    id: 3,
-    title: "2190 7859 9111",
-    status: "Canceled",
-    progress: 25,
-    from: "Florida",
-    to: "Nevada",
-    startDate: "10.12.2020",
-    endDate: "30.12.2021",
-    prepaid: true,
-    transportType: "CIP",
-    daysUsed: 5,
-    totalDays: 20,
+    id: "AL-TR-0003",
+    title: "Order Nº AL-TR-0003",
+    status: "Warning",
+    origin: { ...TR["Bursa (Nilüfer)"], name: "Bursa (Nilüfer) Depo" },
+    destination: { ...TR.Malatya, name: "Malatya Müşteri" },
+    vehicle: {
+      lat: 0,
+      lng: 0,
+      plate: "16 AL 003",
+      driver: "S. Arınç",
+      speedKph: 68,
+    },
+    meta: {
+      startDate: "01.09.2025",
+      endDate: "04.09.2025",
+      transportType: "CIP",
+    },
+    progress: 0.4,
   },
   {
-    id: 4,
-    title: "2476 1812 8911",
+    id: "AL-TR-0004",
+    title: "Order Nº AL-TR-0004",
     status: "Shipping",
-    progress: 35,
-    from: "Florida",
-    to: "Texas",
-    startDate: "20.12.2020",
-    endDate: "10.01.2020",
-    prepaid: true,
-    transportType: "DAP",
-    daysUsed: 8,
-    totalDays: 12,
+    origin: { ...TR["İzmir (Kemalpaşa)"], name: "İzmir (Kemalpaşa) Depo" },
+    destination: { ...TR.Denizli, name: "Denizli Müşteri" },
+    vehicle: {
+      lat: 0,
+      lng: 0,
+      plate: "35 AL 004",
+      driver: "A. Yıldız",
+      speedKph: 76,
+    },
+    meta: {
+      startDate: "01.09.2025",
+      endDate: "02.09.2025",
+      transportType: "DAP",
+    },
+    progress: 0.65,
   },
   {
-    id: 5,
-    title: "2199 4671 1657",
+    id: "AL-TR-0005",
+    title: "Order Nº AL-TR-0005",
     status: "Shipped",
-    progress: 100,
-    from: "Hawaii",
-    to: "Florida",
-    startDate: "11.12.2020",
-    endDate: "29.12.2020",
-    prepaid: true,
-    transportType: "DAT",
-    daysUsed: 12,
-    totalDays: 12,
+    origin: { ...TR["Ankara (Sincan)"], name: "Ankara (Sincan) Depo" },
+    destination: { ...TR.Konya, name: "Konya Müşteri" },
+    vehicle: {
+      lat: 0,
+      lng: 0,
+      plate: "06 AL 005",
+      driver: "D. Çetin",
+      speedKph: 0,
+    },
+    meta: {
+      startDate: "30.08.2025",
+      endDate: "31.08.2025",
+      transportType: "DAT",
+    },
+    progress: 1.0,
   },
-  {
-    id: 6,
-    title: "2210 1675 1345",
-    status: "Warning",
-    progress: 25,
-    from: "Florida",
-    to: "Washington",
-    startDate: "12.12.2020",
-    endDate: "24.12.2020",
-    prepaid: true,
-    transportType: "CIP",
-    daysUsed: 5,
-    totalDays: 20,
-  },
-  {
-    id: 7,
-    title: "2490 1419 4109",
-    status: "Warning",
-    progress: 25,
-    from: "Nevada",
-    to: "Washington",
-    startDate: "22.12.2020",
-    endDate: "12.01.2020",
-    prepaid: true,
-    transportType: "CIP",
-    daysUsed: 5,
-    totalDays: 20,
-  },
-  {
-    id: 8,
-    title: "2578 9098 1215",
-    status: "Canceled",
-    progress: 25,
-    from: "Florida",
-    to: "Oregon",
-    startDate: "12.12.2020",
-    endDate: "28.12.2020",
-    prepaid: true,
-    transportType: "DAT",
-    daysUsed: 5,
-    totalDays: 20,
-  },
-  {
-    id: 9,
-    title: "3001 5689 9999",
-    status: "Shipping",
-    progress: 45,
-    from: "Arizona",
-    to: "New York",
-    startDate: "05.01.2021",
-    endDate: "15.01.2021",
-    prepaid: false,
-    transportType: "DAP",
-    daysUsed: 6,
-    totalDays: 14,
-  },
-  {
-    id: 10,
-    title: "3012 4590 8888",
-    status: "Planned",
-    progress: 0,
-    from: "Texas",
-    to: "Nevada",
-    startDate: "02.01.2021",
-    endDate: "12.01.2021",
-    prepaid: true,
-    transportType: "CIP",
-    daysUsed: 0,
-    totalDays: 10,
-  },
-  {
-    id: 11,
-    title: "3200 7788 2211",
-    status: "Shipping",
-    progress: 60,
-    from: "Georgia",
-    to: "Illinois",
-    startDate: "08.01.2021",
-    endDate: "18.01.2021",
-    prepaid: true,
-    transportType: "DAT",
-    daysUsed: 6,
-    totalDays: 10,
-  },
-  {
-    id: 12,
-    title: "3300 1111 2222",
-    status: "Warning",
-    progress: 40,
-    from: "Utah",
-    to: "Montana",
-    startDate: "07.01.2021",
-    endDate: "17.01.2021",
-    prepaid: false,
-    transportType: "CIP",
-    daysUsed: 4,
-    totalDays: 10,
-  },
-  {
-    id: 13,
-    title: "3400 5555 6666",
-    status: "Shipping",
-    progress: 80,
-    from: "Nevada",
-    to: "Texas",
-    startDate: "04.01.2021",
-    endDate: "14.01.2021",
-    prepaid: true,
-    transportType: "DAP",
-    daysUsed: 9,
-    totalDays: 10,
-  },
-  {
-    id: 14,
-    title: "3500 7777 8888",
-    status: "Shipped",
-    progress: 100,
-    from: "Colorado",
-    to: "Kansas",
-    startDate: "01.01.2021",
-    endDate: "05.01.2021",
-    prepaid: true,
-    transportType: "DAT",
-    daysUsed: 5,
-    totalDays: 5,
-  },
-  {
-    id: 15,
-    title: "3600 9999 0000",
-    status: "Canceled",
-    progress: 15,
-    from: "Ohio",
-    to: "Florida",
-    startDate: "06.01.2021",
-    endDate: "12.01.2021",
-    prepaid: false,
-    transportType: "CIP",
-    daysUsed: 2,
-    totalDays: 14,
-  },
-]);
-
-function toggleAll(event) {
-  selectedShipments.value = event.target.checked
-    ? paginatedShipments.value.map((s) => s.id)
-    : [];
-}
-
-function previousPage() {
-  if (currentPage.value > 1) currentPage.value--;
-}
-function nextPage() {
-  if (currentPage.value < totalPages.value) currentPage.value++;
-}
-
-const filteredShipments = computed(() =>
-  shipments.value.filter((s) => {
-    const q = search.value.toLowerCase();
-
-    const searchMatch =
-      s.title.toLowerCase().includes(q) ||
-      s.from.toLowerCase().includes(q) ||
-      s.to.toLowerCase().includes(q);
-
-    const statusMatch =
-      !filters.value.status || s.status === filters.value.status;
-    const typeMatch =
-      !filters.value.type || s.transportType === filters.value.type;
-    const dateMatch = !filters.value.date || s.startDate === filters.value.date;
-    // priority/carrier veriniz yok; ekleyene kadar false'a düşmemesi için kontrol etmiyoruz.
-
-    return searchMatch && statusMatch && typeMatch && dateMatch;
-  })
-);
-
-// Total pages based on filtered rows
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(filteredShipments.value.length / perPage))
-);
-
-// Clamp currentPage when filters/search change
-watch([filteredShipments, totalPages], () => {
-  if (currentPage.value > totalPages.value)
-    currentPage.value = totalPages.value;
-  if (currentPage.value < 1) currentPage.value = 1;
-});
-
-const startIndex = computed(() => (currentPage.value - 1) * perPage);
-const endIndex = computed(() =>
-  Math.min(startIndex.value + perPage, filteredShipments.value.length)
-);
-
-const paginatedShipments = computed(() =>
-  filteredShipments.value.slice(startIndex.value, endIndex.value)
-);
-
-function statusBadgeClass(status) {
-  switch (status) {
-    case "Shipping":
-      return "bg-primary";
-    case "Shipped":
-      return "bg-success";
-    case "Planned":
-      return "bg-info";
-    case "Canceled":
-      return "bg-danger";
-    case "Warning":
-      return "bg-warning";
-    default:
-      return "bg-secondary";
-  }
-}
-
-const statsCards = [
-  { title: "Total Weight", value: "15.800 kg", subtitle: "Average: 3.160 kg" },
-  { title: "Total Value", value: "$139.450", subtitle: "Avg: $27.890" },
-  { title: "Total Items", value: "443", subtitle: "Avg: 89" },
 ];
 
-const statsCardsWithTotal = computed(() => [
-  {
-    title: "Total Shipments",
-    value: shipments.value.length.toString(),
-    subtitle: "Summary by status:",
-  },
-  ...statsCards,
-]);
+/* -------------------- Yardımcılar -------------------- */
+const mapEl = ref<HTMLDivElement | null>(null);
+let map: L.Map | null = null;
+let overlay: L.LayerGroup | null = null;
+const loading = ref(false);
+let destroyed = false;
 
-const badgeData = computed(() => ({
-  Shipping: {
-    count: shipments.value.filter((s) => s.status === "Shipping").length,
-    color: "primary",
-    icon: "bi-truck",
-  },
-  Shipped: {
-    count: shipments.value.filter((s) => s.status === "Shipped").length,
-    color: "success",
-    icon: "bi-check-circle",
-  },
-  Planned: {
-    count: shipments.value.filter((s) => s.status === "Planned").length,
-    color: "info",
-    icon: "bi-calendar",
-  },
-  Warning: {
-    count: shipments.value.filter((s) => s.status === "Warning").length,
-    color: "warning",
-    icon: "bi-exclamation-triangle",
-  },
-  Canceled: {
-    count: shipments.value.filter((s) => s.status === "Canceled").length,
-    color: "danger",
-    icon: "bi-x-circle",
-  },
-}));
+const colorByStatus = (s: Status) =>
+  s === "Shipping"
+    ? "#198754"
+    : s === "Planned"
+    ? "#0d6efd"
+    : s === "Warning"
+    ? "#fd7e14"
+    : s === "Shipped"
+    ? "#6c757d"
+    : "#dc3545";
+
+/* Arkaplansız emoji icon */
+const icon = (emoji: string) =>
+  L.divIcon({
+    html: `<div class="pin">${emoji}</div>`,
+    className: "pin-wrapper",
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+  });
+
+/* OSRM – yola oturan rota */
+async function roadRoute(points: [number, number][]) {
+  const coordStr = points.map(([lat, lng]) => `${lng},${lat}`).join(";");
+  const url = `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("OSRM route failed");
+  const json = await res.json();
+  const coords = json?.routes?.[0]?.geometry?.coordinates as [number, number][];
+  return coords.map(([lng, lat]) => [lat, lng]) as [number, number][];
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/* Polyline üzerinde yüzde konum */
+function interpolatePoint(
+  path: [number, number][],
+  t: number
+): [number, number] {
+  if (path.length === 0) return [0, 0];
+  if (t <= 0) return path[0];
+  if (t >= 1) return path[path.length - 1];
+  const segLens: number[] = [];
+  let total = 0;
+  for (let i = 1; i < path.length; i++) {
+    const dx = path[i][0] - path[i - 1][0],
+      dy = path[i][1] - path[i - 1][1];
+    const d = Math.hypot(dx, dy);
+    segLens.push(d);
+    total += d;
+  }
+  let target = t * total;
+  for (let i = 1; i < path.length; i++) {
+    if (target <= segLens[i - 1]) {
+      const r = target / segLens[i - 1];
+      return [
+        path[i - 1][0] + (path[i][0] - path[i - 1][0]) * r,
+        path[i - 1][1] + (path[i][1] - path[i - 1][1]) * r,
+      ];
+    }
+    target -= segLens[i - 1];
+  }
+  return path[path.length - 1];
+}
+
+/* Rota + marker odak davranışı */
+function attachFocusBehavior(opts: {
+  past: L.Polyline;
+  future: L.Polyline;
+  vehicleMarker: L.Marker;
+}) {
+  const { past, future, vehicleMarker } = opts;
+  const highlight = () => {
+    past.setStyle({ weight: 8 });
+    future.setStyle({ weight: 8 });
+    past.bringToFront();
+    future.bringToFront();
+  };
+  const unhighlight = () => {
+    past.setStyle({ weight: 5, opacity: 0.95 });
+    future.setStyle({ weight: 5, opacity: 0.35 });
+  };
+  const zoomTo = () => {
+    const b = past.getBounds().extend(future.getBounds());
+    map!.fitBounds(b, { padding: [60, 60] });
+  };
+  [past, future, vehicleMarker].forEach((it) => {
+    it.on("mouseover", highlight);
+    it.on("mouseout", unhighlight);
+    it.on("click", () => {
+      highlight();
+      zoomTo();
+      vehicleMarker.openPopup();
+    });
+  });
+}
+
+/* -------------------- Çizim -------------------- */
+async function drawAll() {
+  if (!map) return;
+  loading.value = true;
+
+  if (overlay) overlay.removeFrom(map);
+  overlay = L.layerGroup().addTo(map);
+
+  const allBounds: [number, number][] = [];
+
+  for (const [idx, o] of orders.entries()) {
+    if (destroyed) return;
+
+    const color = colorByStatus(o.status);
+    const seq: [number, number][] = [
+      [o.origin.lat, o.origin.lng],
+      [o.destination.lat, o.destination.lng],
+    ];
+
+    try {
+      const snapped = await roadRoute(seq);
+
+      const veh = interpolatePoint(snapped, o.progress);
+      o.vehicle.lat = veh[0];
+      o.vehicle.lng = veh[1];
+
+      const vi = Math.max(1, Math.floor(snapped.length * o.progress));
+      const past = snapped.slice(0, vi + 1);
+      const future = snapped.slice(vi);
+
+      // Kontrast için beyaz alt çizgiler
+      L.polyline(past, {
+        color: "#fff",
+        weight: 8,
+        opacity: 0.9,
+        lineCap: "round",
+      }).addTo(overlay);
+      L.polyline(future, {
+        color: "#fff",
+        weight: 8,
+        opacity: 0.5,
+        lineCap: "round",
+      }).addTo(overlay);
+
+      // Üst renkli çizgiler
+      const pastLine = L.polyline(past, {
+        color,
+        weight: 5,
+        opacity: 0.95,
+        lineCap: "round",
+      }).addTo(overlay);
+      const futureLine = L.polyline(future, {
+        color,
+        weight: 5,
+        opacity: 0.35,
+        dashArray: "6,8",
+        lineCap: "round",
+      }).addTo(overlay);
+
+      // Markerlar
+      const mOrigin = L.marker([o.origin.lat, o.origin.lng], {
+        icon: icon("📦"),
+      }).addTo(overlay);
+      const mDest = L.marker([o.destination.lat, o.destination.lng], {
+        icon: icon("🏁"),
+      }).addTo(overlay);
+      const mVeh = L.marker([o.vehicle.lat, o.vehicle.lng], {
+        icon: icon("🚚"),
+      })
+        .bindPopup(
+          `
+          <div style="min-width: 220px">
+            <div style="font-weight:700;margin-bottom:4px">${o.title}</div>
+            <div><b>Durum:</b> ${o.status}</div>
+            <div><b>Çıkış:</b> ${o.origin.name}</div>
+            <div><b>Varış:</b> ${o.destination.name}</div>
+            <div><b>Plaka:</b> ${o.vehicle.plate}</div>
+            <div><b>Sürücü:</b> ${o.vehicle.driver ?? "-"}</div>
+            <div><b>Hız:</b> ${o.vehicle.speedKph ?? 0} km/sa</div>
+            <div style="margin-top:6px"><b>Taşıma:</b> ${
+              o.meta.transportType
+            }</div>
+            <div><b>Başlangıç:</b> ${o.meta.startDate}</div>
+            <div><b>Bitiş:</b> ${o.meta.endDate}</div>
+          </div>
+        `
+        )
+        .addTo(overlay);
+
+      attachFocusBehavior({
+        past: pastLine,
+        future: futureLine,
+        vehicleMarker: mVeh,
+      });
+      mOrigin.on("click", () => pastLine.fire("click"));
+      mDest.on("click", () => pastLine.fire("click"));
+
+      allBounds.push(...snapped);
+    } catch {
+      const line = L.polyline(seq, {
+        color,
+        weight: 5,
+        opacity: 0.85,
+        dashArray: "6,6",
+      }).addTo(overlay);
+      const mOrigin = L.marker([o.origin.lat, o.origin.lng], {
+        icon: icon("📦"),
+      }).addTo(overlay);
+      const mDest = L.marker([o.destination.lat, o.destination.lng], {
+        icon: icon("🏁"),
+      }).addTo(overlay);
+      const flatVeh = interpolatePoint(seq, o.progress);
+      const mVeh = L.marker(flatVeh, { icon: icon("🚚") })
+        .bindPopup(
+          `<b>${o.title}</b><br/>Durum: ${o.status}<br/>Çıkış: ${o.origin.name}<br/>Varış: ${o.destination.name}`
+        )
+        .addTo(overlay);
+
+      line.on("click", () => {
+        line.setStyle({ weight: 8 });
+        map!.fitBounds(line.getBounds(), { padding: [60, 60] });
+        mVeh.openPopup();
+        setTimeout(() => line.setStyle({ weight: 5 }), 800);
+      });
+      mOrigin.on("click", () => line.fire("click"));
+      mDest.on("click", () => line.fire("click"));
+      allBounds.push(...seq);
+    }
+
+    if (idx < orders.length - 1) await sleep(200);
+  }
+
+  if (allBounds.length)
+    map!.fitBounds(L.latLngBounds(allBounds), { padding: [50, 50] });
+  loading.value = false;
+}
+
+function fitAll() {
+  if (!map) return;
+  const pts: [number, number][] = [];
+  orders.forEach((o) =>
+    pts.push(
+      [o.origin.lat, o.origin.lng],
+      [o.destination.lat, o.destination.lng]
+    )
+  );
+  map.fitBounds(L.latLngBounds(pts), { padding: [50, 50] });
+}
+
+/* -------------------- Lifecycle -------------------- */
+onMounted(() => {
+  if (!mapEl.value) return;
+  const osm = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    { maxZoom: 19 }
+  );
+  const hot = L.tileLayer(
+    "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    { maxZoom: 20 }
+  );
+
+  map = L.map(mapEl.value, { center: [39, 35], zoom: 6, layers: [osm] });
+  L.control
+    .layers({ OSM: osm, Humanitarian: hot }, {}, { position: "topleft" })
+    .addTo(map);
+  L.control.scale({ imperial: false }).addTo(map);
+
+  drawAll();
+});
+
+onBeforeUnmount(() => {
+  destroyed = true;
+  if (map) {
+    map.remove();
+    map = null;
+  }
+});
 </script>
 
 <style scoped>
-.table-responsive-sm {
+.orders-page {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 80vh;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 4px 8px;
+}
+
+.btn {
+  border: 1px solid #d0d7de;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn:hover {
+  background: #f6f8fa;
+}
+
+/* Harita kutusu relative — overlay için */
+.map {
+  position: relative;
   width: 100%;
-  overflow-x: auto;
-}
-.table {
-  white-space: nowrap;
-}
-.table th,
-.table td {
-  vertical-align: middle;
+  min-height: calc(89vh - 120px);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.badge {
-  font-size: 0.75rem;
-  padding: 0.4em 0.6em;
-  border-radius: 0.5rem;
+/* Emoji marker */
+.pin {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  line-height: 1;
 }
 
-.table-hover tbody tr {
-  transition: background-color 0.2s ease-in-out;
-}
-.table-hover tbody tr:hover {
-  background-color: var(--bs-table-hover-bg, #f8f9fa);
-}
-.table thead th {
-  border-bottom: 2px solid var(--bs-border-color, #dee2e6);
-}
-
-.border-subtle {
-  border-color: var(--bs-border-color, #dee2e6) !important;
-}
-
-.action-bar {
-  background: var(--bs-body-bg);
-  color: var(--bs-body-color);
-  border-color: var(--bs-border-color);
+/* Yükleniyor overlay: ortalı + yüksek z-index */
+.loading {
+  position: absolute;
+  inset: 0;
+  display: flex; /* ← grid yerine flex */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* tam ortalama */
+  gap: 10px;
+  text-align: center;
+  background: rgba(58, 58, 58, 0.379);
+  color: #222; /* daha koyu ve net */
+  font-weight: 700;
+  z-index: 9999; /* Leaflet katmanlarının üstünde */
+  pointer-events: none; /* sadece haritayı tıklanamaz yapma, çevreye engel olmaz */
 }
 
-/* Dark tema için outline-secondary kontrastı */
-:deep([data-bs-theme="dark"] .btn.btn-outline-secondary) {
-  color: #e9ecef;
-  border-color: #6c757d;
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #0d6efd;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
-:deep([data-bs-theme="dark"] .btn.btn-outline-secondary:hover) {
-  background: #6c757d;
-  color: #fff;
+
+.loading-text {
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  color: #ffffff;
+  text-shadow: #222;
 }
-.user-card,
-.btn-outline-secondary {
-  border: 1px solid var(--border) !important;
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

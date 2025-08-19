@@ -19,29 +19,24 @@
         Logistics System
       </div>
 
-      <!-- Menü -->
       <nav class="flex-grow-1 d-flex flex-column gap-2">
-        <!-- Dashboard -->
-        <RouterLink to="/dashboard" class="nav-link sidebar-link">
-          <LayoutDashboard class="me-2 icon" /> Dashboard
-        </RouterLink>
-
         <!-- Dashboard -->
         <RouterLink to="/orders" class="nav-link sidebar-link">
           <Package class="me-2 icon" /> Orders
         </RouterLink>
 
-        <!-- Tracking -->
-        <RouterLink to="/tracking" class="nav-link sidebar-link">
-          <Map class="me-2 icon" /> Tracking
+        <RouterLink to="/dashboard" class="nav-link sidebar-link">
+          <Map class="me-2 icon" /> Dashboard
         </RouterLink>
 
-        <!-- Invoices -->
+        <RouterLink to="/tracking" class="nav-link sidebar-link">
+          <LayoutDashboard class="me-2 icon" /> Tracking
+        </RouterLink>
+
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
 
-        <!-- Management -->
         <RouterLink
           :to="{ name: 'settings', query: { tab: 'management' } }"
           class="nav-link sidebar-link"

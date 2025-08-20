@@ -2,11 +2,7 @@
   <div class="container-fluid py-2">
     <!-- Header Cards -->
     <div class="row g-3 mb-3">
-      <div
-        class="col-12 col-sm-6 col-lg-3"
-        v-for="(card, index) in statsCardsWithTotal"
-        :key="index"
-      >
+      <div class="col-12 col-sm-6 col-lg-3" v-for="(card, index) in statsCardsWithTotal" :key="index">
         <div class="card p-3 shadow-sm h-100">
           <h6 class="text-muted">{{ card.title }}</h6>
           <h4>{{ card.value }}</h4>
@@ -21,14 +17,9 @@
                 <small>{{ label.count }}</small>
               </div>
               <div class="progress mb-0" style="height: 4px">
-                <div
-                  class="progress-bar"
-                  :class="`bg-${label.color}`"
-                  role="progressbar"
-                  :style="{
-                    width: (label.count / shipments.length) * 130 + '%',
-                  }"
-                />
+                <div class="progress-bar" :class="`bg-${label.color}`" role="progressbar" :style="{
+                  width: (label.count / shipments.length) * 130 + '%',
+                }" />
               </div>
             </div>
           </div>
@@ -42,18 +33,12 @@
       <div class="p-3 pb-0">
         <div class="row g-2 align-items-center">
           <div class="col-12 col-lg">
-            <input
-              v-model="search"
-              type="text"
-              class="form-control"
-              placeholder="Search shipments by Nº, tracking number, customer, or location..."
-            />
+            <input v-model="search" type="text" class="form-control"
+              placeholder="Search shipments by Nº, tracking number, customer, or location..." />
           </div>
           <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 mt-2 mt-lg-2">
-            <button
-              class="btn btn-outline-secondary d-flex align-items-center"
-              @click="filtersVisible = !filtersVisible"
-            >
+            <button class="btn btn-outline-secondary d-flex align-items-center"
+              @click="filtersVisible = !filtersVisible">
               <i class="bi bi-funnel-fill me-1"></i> Filters
             </button>
             <button class="btn btn-outline-secondary d-flex align-items-center">
@@ -125,11 +110,7 @@
           <tbody>
             <tr v-for="shipment in paginatedShipments" :key="shipment.id">
               <td>
-                <input
-                  type="checkbox"
-                  :value="shipment.id"
-                  v-model="selectedShipments"
-                />
+                <input type="checkbox" :value="shipment.id" v-model="selectedShipments" />
               </td>
               <td>{{ shipment.title }}</td>
               <td>{{ shipment.from }}</td>
@@ -155,19 +136,11 @@
           <span class="ms-2">• Page {{ currentPage }} / {{ totalPages }}</span>
         </small>
         <div>
-          <button
-            class="btn btn-outline-secondary btn-sm me-2"
-            @click="previousPage"
-            :disabled="currentPage === 1"
-          >
+          <button class="btn btn-outline-secondary btn-sm me-2" @click="previousPage" :disabled="currentPage === 1">
             Previous
           </button>
           <span class="btn btn-dark btn-sm">{{ currentPage }}</span>
-          <button
-            class="btn btn-outline-secondary btn-sm ms-2"
-            @click="nextPage"
-            :disabled="currentPage >= totalPages"
-          >
+          <button class="btn btn-outline-secondary btn-sm ms-2" @click="nextPage" :disabled="currentPage >= totalPages">
             Next
           </button>
         </div>
@@ -175,18 +148,11 @@
     </div>
 
     <!-- Bottom Action Bar -->
-    <div
-      v-if="selectedShipments.length > 0"
+    <div v-if="selectedShipments.length > 0"
       class="action-bar position-fixed bottom-0 start-50 translate-middle-x rounded-top shadow-lg px-4 py-3 d-flex align-items-center gap-3 border"
-      style="z-index: 1070; width: auto; max-width: 95%; bottom: 2vh"
-    >
-      <span class="me-2"
-        >{{ selectedShipments.length }} shipments selected</span
-      >
-      <button
-        class="btn btn-outline-secondary btn-sm"
-        @click="selectedShipments = []"
-      >
+      style="z-index: 1070; width: auto; max-width: 95%; bottom: 2vh">
+      <span class="me-2">{{ selectedShipments.length }} shipments selected</span>
+      <button class="btn btn-outline-secondary btn-sm" @click="selectedShipments = []">
         Clear
       </button>
       <button class="btn btn-outline-secondary btn-sm">Print</button>
@@ -544,9 +510,11 @@ const badgeData = computed(() => ({
   width: 100%;
   overflow-x: auto;
 }
+
 .table {
   white-space: nowrap;
 }
+
 .table th,
 .table td {
   vertical-align: middle;
@@ -561,9 +529,11 @@ const badgeData = computed(() => ({
 .table-hover tbody tr {
   transition: background-color 0.2s ease-in-out;
 }
+
 .table-hover tbody tr:hover {
   background-color: var(--bs-table-hover-bg, #f8f9fa);
 }
+
 .table thead th {
   border-bottom: 2px solid var(--bs-border-color, #dee2e6);
 }
@@ -583,6 +553,7 @@ const badgeData = computed(() => ({
   color: #e9ecef;
   border-color: #6c757d;
 }
+
 :deep([data-bs-theme="dark"] .btn.btn-outline-secondary:hover) {
   background: #6c757d;
   color: #fff;

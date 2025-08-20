@@ -1,10 +1,7 @@
 <template>
   <div>
     <!-- Sidebar (masaüstü için) -->
-    <aside
-      v-if="!isMobile"
-      class="d-flex flex-column text-white p-3"
-      style="
+    <aside v-if="!isMobile" class="d-flex flex-column text-white p-3" style="
         width: 200px;
         min-height: 90vh;
         background-image: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg');
@@ -12,21 +9,19 @@
         background-blend-mode: overlay;
         background-size: cover;
         border-radius: 0.75rem;
-      "
-    >
+      ">
       <!-- LOGO -->
       <div class="text-uppercase fw-bold fs-6 mb-4 text-center">
         Logistics System
       </div>
 
       <nav class="flex-grow-1 d-flex flex-column gap-2">
-        <!-- Dashboard -->
-        <RouterLink to="/orders" class="nav-link sidebar-link">
-          <Package class="me-2 icon" /> Orders
-        </RouterLink>
-
         <RouterLink to="/dashboard" class="nav-link sidebar-link">
           <Map class="me-2 icon" /> Dashboard
+        </RouterLink>
+
+        <RouterLink to="/orders" class="nav-link sidebar-link">
+          <Package class="me-2 icon" /> Orders
         </RouterLink>
 
         <RouterLink to="/tracking" class="nav-link sidebar-link">
@@ -37,21 +32,14 @@
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
 
-        <RouterLink
-          :to="{ name: 'settings', query: { tab: 'management' } }"
-          class="nav-link sidebar-link"
-          :class="{ 'is-active': isManagementActive }"
-          active-class=""
-          exact-active-class=""
-        >
+        <RouterLink :to="{ name: 'settings', query: { tab: 'management' } }" class="nav-link sidebar-link"
+          :class="{ 'is-active': isManagementActive }" active-class="" exact-active-class="">
           <Users class="me-2 icon" /> Management
         </RouterLink>
       </nav>
 
       <!-- Kullanıcı Kutusu -->
-      <div
-        class="user-card bg-white bg-opacity-25 rounded-4 text-white p-3 mt-4"
-      >
+      <div class="user-card bg-white bg-opacity-25 rounded-4 text-white p-3 mt-4">
         <!-- Baş harf avatarı -->
         <div class="avatar-initials mb-2 mx-auto" aria-label="User initials">
           {{ initials }}
@@ -67,62 +55,37 @@
     <div v-if="isMenuOpen && isMobile" class="mobile-menu-overlay">
       <div class="mobile-sidebar">
         <!-- Menü Butonu -->
-        <button
-          class="btn btn-outline-light align-self-start mb-4"
-          @click="$emit('closeSidebar')"
-          style="
+        <button class="btn btn-outline-light align-self-start mb-4" @click="$emit('closeSidebar')" style="
             width: 36px;
             height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-          "
-        >
+          ">
           <Menu :size="40" class="text-white" />
         </button>
 
         <!-- Menü Linkleri -->
-        <RouterLink
-          class="nav-link text-white fs-5 mb-3"
-          to="/dashboard"
-          @click="$emit('closeSidebar')"
-        >
+        <RouterLink class="nav-link text-white fs-5 mb-3" to="/dashboard" @click="$emit('closeSidebar')">
           🏠 Dashboard
         </RouterLink>
 
-        <RouterLink
-          class="nav-link text-white fs-5 mb-3"
-          to="/orders"
-          @click="$emit('closeSidebar')"
-        >
+        <RouterLink class="nav-link text-white fs-5 mb-3" to="/orders" @click="$emit('closeSidebar')">
           🗺️ Orders
         </RouterLink>
 
-        <RouterLink
-          class="nav-link text-white fs-5 mb-3"
-          to="/tracking"
-          @click="$emit('closeSidebar')"
-        >
+        <RouterLink class="nav-link text-white fs-5 mb-3" to="/tracking" @click="$emit('closeSidebar')">
           📍 Tracking
         </RouterLink>
 
-        <RouterLink
-          class="nav-link text-white fs-5 mb-3"
-          to="/invoices"
-          @click="$emit('closeSidebar')"
-        >
+        <RouterLink class="nav-link text-white fs-5 mb-3" to="/invoices" @click="$emit('closeSidebar')">
           📄 Invoices
         </RouterLink>
 
         <!-- Management (mobil) -->
-        <RouterLink
-          :to="{ name: 'settings', query: { tab: 'management' } }"
-          class="nav-link text-white fs-5 mb-3"
-          :class="{ 'is-active': isManagementActive }"
-          active-class=""
-          exact-active-class=""
-          @click="$emit('closeSidebar')"
-        >
+        <RouterLink :to="{ name: 'settings', query: { tab: 'management' } }" class="nav-link text-white fs-5 mb-3"
+          :class="{ 'is-active': isManagementActive }" active-class="" exact-active-class=""
+          @click="$emit('closeSidebar')">
           👥 Management
         </RouterLink>
       </div>
@@ -192,6 +155,7 @@ const initials = computed(() => getInitials(displayName.value));
   border-radius: 0.375rem;
   font-weight: 500;
 }
+
 .sidebar-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
@@ -224,11 +188,9 @@ const initials = computed(() => getInitials(displayName.value));
   width: 56px;
   height: 56px;
   border-radius: 9999px;
-  background: radial-gradient(
-      120% 120% at 30% 25%,
+  background: radial-gradient(120% 120% at 30% 25%,
       rgba(255, 255, 255, 0.14),
-      rgba(255, 255, 255, 0) 45%
-    ),
+      rgba(255, 255, 255, 0) 45%),
     var(--avatar-bg);
   border: 2px solid var(--avatar-border);
   box-shadow: 0 2px 10px var(--avatar-ring), 0 0 0 3px rgba(255, 255, 255, 0.08);
@@ -259,6 +221,7 @@ const initials = computed(() => getInitials(displayName.value));
   align-items: stretch;
   justify-content: flex-start;
 }
+
 .mobile-sidebar {
   background-color: rgba(0, 0, 0, 0.546);
   width: 100%;
@@ -270,10 +233,12 @@ const initials = computed(() => getInitials(displayName.value));
   overflow-y: auto;
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
 }
+
 .mobile-sidebar .nav-link {
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
 }
+
 .mobile-sidebar .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }

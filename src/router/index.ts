@@ -52,7 +52,7 @@ router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !authed) {
     next({ name: "Login", query: { redirect: to.fullPath } });
   } else if (to.meta.guestOnly && authed) {
-    next({ name: "Orders" });
+    next({ name: "dashboard" });
   } else {
     next();
   }

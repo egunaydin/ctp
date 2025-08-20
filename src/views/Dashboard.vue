@@ -1,8 +1,5 @@
 <template>
   <div class="orders-page">
-    <div class="toolbar">
-      <button class="btn" @click="fitAll">Tümünü Göster</button>
-    </div>
     <div class="map" ref="mapEl">
       <div v-if="loading" class="loading">
         <div class="spinner"></div>
@@ -169,12 +166,12 @@ const colorByStatus = (s: Status) =>
   s === "Shipping"
     ? "#198754"
     : s === "Planned"
-    ? "#0d6efd"
-    : s === "Warning"
-    ? "#fd7e14"
-    : s === "Shipped"
-    ? "#6c757d"
-    : "#dc3545";
+      ? "#0d6efd"
+      : s === "Warning"
+        ? "#fd7e14"
+        : s === "Shipped"
+          ? "#6c757d"
+          : "#dc3545";
 
 const icon = (emoji: string) =>
   L.divIcon({
@@ -332,9 +329,8 @@ async function drawAll() {
             <div><b>Plaka:</b> ${o.vehicle.plate}</div>
             <div><b>Sürücü:</b> ${o.vehicle.driver ?? "-"}</div>
             <div><b>Hız:</b> ${o.vehicle.speedKph ?? 0} km/sa</div>
-            <div style="margin-top:6px"><b>Taşıma:</b> ${
-              o.meta.transportType
-            }</div>
+            <div style="margin-top:6px"><b>Taşıma:</b> ${o.meta.transportType
+          }</div>
             <div><b>Başlangıç:</b> ${o.meta.startDate}</div>
             <div><b>Bitiş:</b> ${o.meta.endDate}</div>
           </div>
@@ -390,18 +386,6 @@ async function drawAll() {
   loading.value = false;
 }
 
-function fitAll() {
-  if (!map) return;
-  const pts: [number, number][] = [];
-  orders.forEach((o) =>
-    pts.push(
-      [o.origin.lat, o.origin.lng],
-      [o.destination.lat, o.destination.lng]
-    )
-  );
-  map.fitBounds(L.latLngBounds(pts), { padding: [50, 50] });
-}
-
 onMounted(() => {
   if (!mapEl.value) return;
   const osm = L.tileLayer(
@@ -439,28 +423,12 @@ onBeforeUnmount(() => {
   height: 80vh;
 }
 
-.toolbar {
-  display: flex;
-  gap: 8px;
-  padding: 4px 8px;
-}
-
-.btn {
-  border: 1px solid #d0d7de;
-  padding: 6px 10px;
-  border-radius: 10px;
-  background: #ffffff;
-  cursor: pointer;
-  font-weight: 600;
-}
-.btn:hover {
-  background: #f6f8fa;
-}
+/* toolbar ve buton kaldırıldı */
 
 .map {
   position: relative;
   width: 100%;
-  min-height: calc(98vh - 125px);
+  min-height: calc(102vh - 125px);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -485,7 +453,7 @@ onBeforeUnmount(() => {
   gap: 10px;
   text-align: center;
   background: rgba(58, 58, 58, 0.379);
-  color: #222; /* daha koyu ve net */
+  color: #222;
   font-weight: 700;
   z-index: 9999;
   pointer-events: none;

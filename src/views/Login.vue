@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="login-wrap min-vh-100 d-flex align-items-center justify-content-center"
-  >
+  <div class="login-wrap min-vh-100 d-flex align-items-center justify-content-center">
     <!-- Center card -->
     <div class="login-card shadow-apple">
       <div class="content-col">
@@ -13,92 +11,40 @@
 
           <!-- Big title under logo -->
           <div class="main-title">
-            <template v-if="mode === 'login'"
-              >Login With E-mail Identifier</template
-            >
+            <template v-if="mode === 'login'">Login With E-mail Identifier</template>
             <template v-else>Reset Your Password</template>
           </div>
 
           <!-- Shared error/info row -->
-          <div
-            class="error-row"
-            :class="{ show: !!error || !!resetInfo }"
-            role="alert"
-            aria-live="polite"
-          >
+          <div class="error-row" :class="{ show: !!error || !!resetInfo }" role="alert" aria-live="polite">
             {{ error || resetInfo }}
           </div>
 
           <!-- LOGIN FORM -->
-          <form
-            v-if="mode === 'login'"
-            @submit.prevent="doLogin"
-            class="form-stack"
-          >
+          <form v-if="mode === 'login'" @submit.prevent="doLogin" class="form-stack">
             <!-- E-mail -->
             <div class="field">
               <div class="input-with-action">
-                <input
-                  ref="emailInputEl"
-                  v-model.trim="email"
-                  type="email"
-                  class="form-control form-control-xl pe-5"
-                  placeholder="E-mail"
-                  autocomplete="username"
-                  required
-                  autofocus
-                  inputmode="email"
-                  @keyup.enter="verifyEmail"
-                  :disabled="checkingEmail || loggingIn || emailVerified"
-                />
-                <button
-                  class="icon-btn"
-                  type="button"
-                  :disabled="
-                    !email || checkingEmail || loggingIn || emailVerified
-                  "
-                  @click="verifyEmail"
-                  aria-label="Verify e-mail"
-                  title="Verify e-mail"
-                >
-                  <span
-                    v-if="checkingEmail"
-                    class="spinner-border spinner-border-sm"
-                  />
+                <input ref="emailInputEl" v-model.trim="email" type="email" class="form-control form-control-xl pe-5"
+                  placeholder="E-mail" autocomplete="username" required autofocus inputmode="email"
+                  @keyup.enter="verifyEmail" :disabled="checkingEmail || loggingIn || emailVerified" />
+                <button class="icon-btn" type="button" :disabled="!email || checkingEmail || loggingIn || emailVerified
+                  " @click="verifyEmail" aria-label="Verify e-mail" title="Verify e-mail">
+                  <span v-if="checkingEmail" class="spinner-border spinner-border-sm" />
                   <ArrowRight v-else :size="20" />
                 </button>
               </div>
             </div>
 
             <!-- Password (reveals after email is verified) -->
-            <div
-              class="field field--reserve password-slot"
-              :class="{ visible: emailVerified }"
-            >
+            <div class="field field--reserve password-slot" :class="{ visible: emailVerified }">
               <div class="input-with-action">
-                <input
-                  ref="passwordInputEl"
-                  v-model="password"
-                  type="password"
-                  class="form-control form-control-xl pe-5"
-                  placeholder="Password"
-                  autocomplete="current-password"
-                  required
-                  @keyup.enter="doLogin"
-                  :disabled="loggingIn || !emailVerified"
-                />
-                <button
-                  class="icon-btn"
-                  type="button"
-                  :disabled="!password || loggingIn || !emailVerified"
-                  @click="doLogin"
-                  aria-label="Submit password"
-                  title="Submit password"
-                >
-                  <span
-                    v-if="loggingIn"
-                    class="spinner-border spinner-border-sm"
-                  />
+                <input ref="passwordInputEl" v-model="password" type="password"
+                  class="form-control form-control-xl pe-5" placeholder="Password" autocomplete="current-password"
+                  required @keyup.enter="doLogin" :disabled="loggingIn || !emailVerified" />
+                <button class="icon-btn" type="button" :disabled="!password || loggingIn || !emailVerified"
+                  @click="doLogin" aria-label="Submit password" title="Submit password">
+                  <span v-if="loggingIn" class="spinner-border spinner-border-sm" />
                   <ArrowRight v-else :size="20" />
                 </button>
               </div>
@@ -109,17 +55,9 @@
           <form v-else @submit.prevent="doReset" class="form-stack">
             <div class="field">
               <div class="input-with-action">
-                <input
-                  ref="resetEmailInputEl"
-                  v-model.trim="resetEmail"
-                  type="email"
-                  class="form-control form-control-xl pe-5"
-                  placeholder="Enter your e-mail"
-                  autocomplete="username"
-                  required
-                  inputmode="email"
-                  :disabled="resetting"
-                />
+                <input ref="resetEmailInputEl" v-model.trim="resetEmail" type="email"
+                  class="form-control form-control-xl pe-5" placeholder="Enter your e-mail" autocomplete="username"
+                  required inputmode="email" :disabled="resetting" />
               </div>
             </div>
 
@@ -128,26 +66,13 @@
 
             <!-- Actions -->
             <div class="reset-actions">
-              <button
-                type="button"
-                class="btn btn-link p-0 link-btn"
-                @click="switchToLogin"
-                :disabled="resetting"
-              >
+              <button type="button" class="btn btn-link p-0 link-btn" @click="switchToLogin" :disabled="resetting">
                 ← Back to sign in
               </button>
 
-              <button
-                type="submit"
-                class="btn btn-primary"
-                :disabled="!resetEmail || resetting"
-                aria-label="Send reset link"
-                title="Send reset link"
-              >
-                <span
-                  v-if="resetting"
-                  class="spinner-border spinner-border-sm me-2"
-                />
+              <button type="submit" class="btn btn-primary" :disabled="!resetEmail || resetting"
+                aria-label="Send reset link" title="Send reset link">
+                <span v-if="resetting" class="spinner-border spinner-border-sm me-2" />
                 Send reset link
               </button>
             </div>
@@ -157,11 +82,7 @@
         <!-- Bottom (extras) -->
         <div class="extras">
           <label class="stay d-inline-flex align-items-center gap-2">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              v-model="isStayConnected"
-            />
+            <input type="checkbox" class="form-check-input" v-model="isStayConnected" />
             <span>Stay connected</span>
           </label>
 
@@ -265,7 +186,7 @@ async function doLogin() {
   try {
     if (password.value === DEMO_PASS) {
       localStorage.setItem("auth", "1");
-      const target = (route.query.redirect as string) || "/orders";
+      const target = (route.query.redirect as string) || "/dashboard";
       await router.replace(target);
     } else {
       error.value = "Invalid password.";
@@ -301,10 +222,8 @@ async function doReset() {
 /* ===== Global background: beyaz + çok hafif görsel ===== */
 .login-wrap {
   background-color: #fff;
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.88),
-      rgba(255, 255, 255, 0.88)
-    ),
+  background-image: linear-gradient(rgba(255, 255, 255, 0.88),
+      rgba(255, 255, 255, 0.88)),
     url("@/assets/1 1.jpg");
   background-size: cover;
   background-position: center;
@@ -326,6 +245,7 @@ async function doReset() {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
 }
+
 .shadow-apple {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 40px 120px rgba(0, 0, 0, 0.12);
 }
@@ -350,6 +270,7 @@ async function doReset() {
   justify-content: center;
   margin: 0 0 clamp(10px, 2vh, 16px) 0;
 }
+
 .logo-img {
   width: min(275px, 80%);
   height: auto;
@@ -374,6 +295,7 @@ async function doReset() {
   visibility: hidden;
   margin: 6px 0 10px 0;
 }
+
 .error-row.show {
   visibility: visible;
 }
@@ -395,13 +317,16 @@ async function doReset() {
 :root {
   --row-h: clamp(48px, 6.4vh, 56px);
 }
+
 .field {
   display: block;
 }
+
 .field--reserve {
   height: var(--row-h);
   overflow: hidden;
 }
+
 .field--reserve .input-with-action {
   height: 100%;
   display: flex;
@@ -414,6 +339,7 @@ async function doReset() {
   visibility: hidden;
   transition: opacity 0.2s ease;
 }
+
 .password-slot.visible {
   opacity: 1;
   visibility: visible;
@@ -427,6 +353,7 @@ async function doReset() {
   border-width: 2px;
   border-color: rgba(0, 0, 0, 0.18);
 }
+
 .form-control-xl:focus {
   border-color: #7aa8ff;
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
@@ -434,7 +361,7 @@ async function doReset() {
 
 /* input-with-action sarmalayıcısı ve iç input aynı yükseklikte dursun */
 .input-with-action,
-.input-with-action > .form-control-xl {
+.input-with-action>.form-control-xl {
   height: var(--row-h);
   line-height: var(--row-h);
   display: flex;
@@ -442,14 +369,16 @@ async function doReset() {
 }
 
 /* Sağda ikon yokken de boşluk eşitlensin (reset ekranı) */
-.input-with-action > .form-control-xl {
-  padding-right: 44px; /* ikon alanı kadar */
+.input-with-action>.form-control-xl {
+  padding-right: 44px;
+  /* ikon alanı kadar */
 }
 
 /* Input içi ikon buton */
 .input-with-action {
   position: relative;
 }
+
 .icon-btn {
   position: absolute;
   right: 8px;
@@ -463,20 +392,24 @@ async function doReset() {
   justify-content: center;
   color: #6c757d;
 }
+
 .icon-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .icon-btn:hover:not(:disabled) {
   color: #0d6efd;
 }
 
 /* ===== Reset aksiyonları ===== */
 .reset-actions {
-  margin-top: -20px; /* e-mail satırına yaklaşsın */
+  margin-top: -20px;
+  /* e-mail satırına yaklaşsın */
   display: flex;
   align-items: center;
-  justify-content: space-between; /* solda link, sağda buton */
+  justify-content: space-between;
+  /* solda link, sağda buton */
   min-height: var(--row-h);
 }
 
@@ -486,6 +419,7 @@ async function doReset() {
   padding-top: clamp(12px, 2.4vh, 24px);
   text-align: center;
 }
+
 .stay {
   color: #6c757d;
   font-size: 0.95rem;
@@ -505,9 +439,11 @@ async function doReset() {
   background-color: #fff;
   transition: all 0.2s ease;
 }
+
 .form-check-input:hover {
   border-color: #0d6efd;
 }
+
 .form-check-input:checked {
   background-color: #0d6efd;
   border-color: #0d6efd;
@@ -524,14 +460,17 @@ async function doReset() {
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .link {
   font-size: 0.9rem;
   text-decoration: none;
   color: #0d6efd;
 }
+
 .link:hover {
   text-decoration: underline;
 }
+
 .link-btn {
   background: none;
   border: none;
@@ -541,6 +480,7 @@ async function doReset() {
   text-decoration: none;
   cursor: pointer;
 }
+
 .link-btn:hover {
   text-decoration: underline;
 }
@@ -553,10 +493,12 @@ async function doReset() {
     padding: 16px;
     border-radius: 22px;
   }
+
   .logo-img {
     width: min(200px, 82%);
     margin-bottom: 8px;
   }
+
   .form-stack {
     margin-top: clamp(18px, 5vh, 48px);
   }
@@ -567,13 +509,16 @@ async function doReset() {
     width: 94vw;
     padding: 14px;
   }
+
   .form-control-xl {
     height: 46px;
     font-size: 0.95rem;
   }
+
   .icon-btn {
     right: 6px;
   }
+
   .reset-actions {
     margin-top: -12px;
     min-height: 46px;

@@ -5,7 +5,9 @@ import { createPinia } from 'pinia'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/assets/main.css'
-import 'bootstrap' // JS tarafı için gerekli
+import 'bootstrap'
+import 'leaflet/dist/leaflet.css'
+
 
 const app = createApp(App)
 

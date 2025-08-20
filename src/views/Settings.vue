@@ -28,6 +28,16 @@
       <li class="nav-item">
         <a
           class="nav-link"
+          :class="{ active: currentTab === 'management' }"
+          @click="setTab('management')"
+          href="#"
+          role="tab"
+          >🧑‍💼 Management</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
           :class="{ active: currentTab === 'security' }"
           @click="setTab('security')"
           href="#"

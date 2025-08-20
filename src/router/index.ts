@@ -10,8 +10,14 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/dashboard",
-    name: "Dashboard",
+    name: "dashboard",
     component: () => import("@/views/Dashboard.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/orders",
+    name: "Orders",
+    component: () => import("@/views/Orders.vue"),
     meta: { requiresAuth: true },
   },
   {
@@ -46,7 +52,7 @@ router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !authed) {
     next({ name: "Login", query: { redirect: to.fullPath } });
   } else if (to.meta.guestOnly && authed) {
-    next({ name: "Dashboard" });
+    next({ name: "Orders" });
   } else {
     next();
   }

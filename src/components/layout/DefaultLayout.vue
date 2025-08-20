@@ -9,7 +9,8 @@
           </div>
 
           <div class="flex-grow-1 d-flex flex-column ms-3">
-            <Topbar />
+            <!-- Sadece dashboard değilse Topbar göster -->
+            <Topbar v-if="!isDashboard" />
             <main class="flex-grow-1 mt-0">
               <slot />
             </main>
@@ -18,7 +19,7 @@
 
         <!-- Mobil -->
         <div class="d-block d-md-none">
-          <Topbar @openSidebar="showMobileMenu = true" />
+          <Topbar v-if="!isDashboard" @openSidebar="showMobileMenu = true" />
           <main class="mt-1">
             <slot />
           </main>
@@ -46,11 +47,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import Sidebar from "./Sidebar.vue";
 import Topbar from "./Topbar.vue";
 
 const showMobileMenu = ref(false);
+const route = useRoute();
+
+// Eğer route adı "dashboard" ise true döner
+const isDashboard = computed(() => route.name === "dashboard");
 </script>
 
 <style scoped>

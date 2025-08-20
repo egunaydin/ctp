@@ -19,21 +19,31 @@
         Logistics System
       </div>
 
-      <!-- Menü -->
       <nav class="flex-grow-1 d-flex flex-column gap-2">
+        <!-- Dashboard -->
+        <RouterLink to="/orders" class="nav-link sidebar-link">
+          <Package class="me-2 icon" /> Orders
+        </RouterLink>
+
         <RouterLink to="/dashboard" class="nav-link sidebar-link">
-          <LayoutDashboard class="me-2 icon" /> Orders
+          <Map class="me-2 icon" /> Dashboard
         </RouterLink>
+
         <RouterLink to="/tracking" class="nav-link sidebar-link">
-          <Map class="me-2 icon" /> Tracking
+          <LayoutDashboard class="me-2 icon" /> Tracking
         </RouterLink>
+
         <RouterLink to="/invoices" class="nav-link sidebar-link">
           <FileText class="me-2 icon" /> Invoices
         </RouterLink>
-        <RouterLink to="/analytics" class="nav-link sidebar-link">
-          <BarChart class="me-2 icon" /> Analytics
-        </RouterLink>
-        <RouterLink to="/management" class="nav-link sidebar-link">
+
+        <RouterLink
+          :to="{ name: 'settings', query: { tab: 'management' } }"
+          class="nav-link sidebar-link"
+          :class="{ 'is-active': isManagementActive }"
+          active-class=""
+          exact-active-class=""
+        >
           <Users class="me-2 icon" /> Management
         </RouterLink>
       </nav>
@@ -74,34 +84,47 @@
         <!-- Menü Linkleri -->
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
-          to="/"
+          to="/dashboard"
           @click="$emit('closeSidebar')"
-          >🏠 Orders</RouterLink
         >
+          🏠 Dashboard
+        </RouterLink>
+
+        <RouterLink
+          class="nav-link text-white fs-5 mb-3"
+          to="/orders"
+          @click="$emit('closeSidebar')"
+        >
+          🗺️ Orders
+        </RouterLink>
+
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
           to="/tracking"
           @click="$emit('closeSidebar')"
-          >📍 Tracking</RouterLink
         >
+          📍 Tracking
+        </RouterLink>
+
         <RouterLink
           class="nav-link text-white fs-5 mb-3"
           to="/invoices"
           @click="$emit('closeSidebar')"
-          >📄 Invoices</RouterLink
         >
+          📄 Invoices
+        </RouterLink>
+
+        <!-- Management (mobil) -->
         <RouterLink
+          :to="{ name: 'settings', query: { tab: 'management' } }"
           class="nav-link text-white fs-5 mb-3"
-          to="/analytics"
+          :class="{ 'is-active': isManagementActive }"
+          active-class=""
+          exact-active-class=""
           @click="$emit('closeSidebar')"
-          >📊 Analytics</RouterLink
         >
-        <RouterLink
-          class="nav-link text-white fs-5 mb-3"
-          to="/management"
-          @click="$emit('closeSidebar')"
-          >👥 Management</RouterLink
-        >
+          👥 Management
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -109,14 +132,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { RouterLink } from "vue-router";
+import { useRoute, RouterLink } from "vue-router";
 import {
   LayoutDashboard,
   Map,
   FileText,
-  BarChart,
   Users,
   Menu,
+  Package,
+  Package2,
+  Package2Icon,
 } from "lucide-vue-next";
 
 const props = defineProps<{
@@ -127,9 +152,19 @@ const props = defineProps<{
 
 defineEmits(["closeSidebar"]);
 
-const isMobile = ref(window.innerWidth < 768);
+const route = useRoute();
+
+/** Sadece settings?tab=management iken true */
+const isManagementActive = computed(
+  () => route.name === "settings" && route.query.tab === "management"
+);
+
+const isMobile = ref(false);
 const onResize = () => (isMobile.value = window.innerWidth < 768);
-onMounted(() => window.addEventListener("resize", onResize));
+onMounted(() => {
+  onResize();
+  window.addEventListener("resize", onResize);
+});
 onBeforeUnmount(() => window.removeEventListener("resize", onResize));
 
 const displayName = computed(() => props.userName?.trim() || "Sinem BAHAR");
@@ -160,7 +195,15 @@ const initials = computed(() => getInitials(displayName.value));
 .sidebar-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+/* Varsayılan exact-active (Orders/Tracking/Invoices için) */
 .router-link-exact-active.sidebar-link {
+  background-color: #fff;
+  color: #0d6efd;
+}
+
+/* Management için kendi aktif sınıfımız */
+.sidebar-link.is-active {
   background-color: #fff;
   color: #0d6efd;
 }
@@ -174,9 +217,9 @@ const initials = computed(() => getInitials(displayName.value));
 
 /* Daha okunaklı avatar */
 .avatar-initials {
-  --avatar-bg: #1f2630; /* koyu, düz zemin */
-  --avatar-border: #ffffffe6; /* parlak beyaz kenar */
-  --avatar-ring: rgba(0, 0, 0, 0.45); /* dış halka gölgesi */
+  --avatar-bg: #1f2630;
+  --avatar-border: #ffffffe6;
+  --avatar-ring: rgba(0, 0, 0, 0.45);
 
   width: 56px;
   height: 56px;
@@ -188,14 +231,13 @@ const initials = computed(() => getInitials(displayName.value));
     ),
     var(--avatar-bg);
   border: 2px solid var(--avatar-border);
-  box-shadow: 0 2px 10px var(--avatar-ring),
-    /* dış gölge */ 0 0 0 3px rgba(255, 255, 255, 0.08); /* yumuşak dış halka */
+  box-shadow: 0 2px 10px var(--avatar-ring), 0 0 0 3px rgba(255, 255, 255, 0.08);
 
   color: #fff;
   font-weight: 800;
   font-size: 18px;
   letter-spacing: 0.3px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); /* beyaz harfe kontrast */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 
   display: flex;
   align-items: center;

@@ -5,10 +5,18 @@
     <!-- Center card -->
     <div class="login-card shadow-apple">
       <div class="content-col">
-        <!-- Top (logo + form) -->
+        <!-- Top (logo + big title + form) -->
         <div class="top-block">
           <div class="logo-container">
             <img :src="lightLogo" alt="Alışan Logistics" class="logo-img" />
+          </div>
+
+          <!-- Big title under logo -->
+          <div class="main-title">
+            <template v-if="mode === 'login'"
+              >Login With E-mail Identifier</template
+            >
+            <template v-else>Reset Your Password</template>
           </div>
 
           <!-- Shared error/info row -->
@@ -27,9 +35,6 @@
             @submit.prevent="doLogin"
             class="form-stack"
           >
-            <!-- reset başlığı kadar yer tutan boşluk -->
-            <div class="field heading-spacer" aria-hidden="true"></div>
-
             <!-- E-mail -->
             <div class="field">
               <div class="input-with-action">
@@ -65,7 +70,7 @@
               </div>
             </div>
 
-            <!-- Password -->
+            <!-- Password (reveals after email is verified) -->
             <div
               class="field field--reserve password-slot"
               :class="{ visible: emailVerified }"
@@ -102,18 +107,13 @@
 
           <!-- RESET FORM -->
           <form v-else @submit.prevent="doReset" class="form-stack">
-            <!-- login ile aynı yükseklikte başlık alanı -->
-            <div class="field heading-spacer">
-              <div class="reset-title">Reset your password</div>
-            </div>
-
             <div class="field">
               <div class="input-with-action">
                 <input
                   ref="resetEmailInputEl"
                   v-model.trim="resetEmail"
                   type="email"
-                  class="form-control form-control-xl"
+                  class="form-control form-control-xl pe-5"
                   placeholder="Enter your e-mail"
                   autocomplete="username"
                   required
@@ -123,10 +123,10 @@
               </div>
             </div>
 
-            <!-- login'deki şifre satırının yüksekliğini dengeleyen boşluk -->
+            <!-- login'deki şifre satırının yüksekliğini dengeleyen boşluk nasıl  -->
             <div class="field field--reserve" aria-hidden="true"></div>
 
-            <!-- Aksiyon satırı: 20px yukarı ve e-mail satırıyla hizalı -->
+            <!-- Actions -->
             <div class="reset-actions">
               <button
                 type="button"
@@ -265,7 +265,7 @@ async function doLogin() {
   try {
     if (password.value === DEMO_PASS) {
       localStorage.setItem("auth", "1");
-      const target = (route.query.redirect as string) || "/dashboard";
+      const target = (route.query.redirect as string) || "/orders";
       await router.replace(target);
     } else {
       error.value = "Invalid password.";
@@ -323,9 +323,9 @@ async function doReset() {
   align-items: stretch;
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
 }
-
 .shadow-apple {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 40px 120px rgba(0, 0, 0, 0.12);
 }
@@ -344,15 +344,26 @@ async function doReset() {
   display: flex;
   flex-direction: column;
 }
+
 .logo-container {
   display: flex;
   justify-content: center;
-  margin: 0 0 clamp(16px, 2.8vh, 24px) 0;
+  margin: 0 0 clamp(10px, 2vh, 16px) 0;
 }
 .logo-img {
-  width: min(360px, 80%);
+  width: min(275px, 80%);
   height: auto;
   object-fit: contain;
+}
+
+/* Big title under logo */
+.main-title {
+  text-align: center;
+  font-size: clamp(1.3rem, 2.6vw, 1.75rem);
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  margin-bottom: 80px;
+  color: #000;
 }
 
 /* ===== Hata / Bilgi ===== */
@@ -361,7 +372,7 @@ async function doReset() {
   text-align: center;
   color: #dc3545;
   visibility: hidden;
-  margin: 8px 0 12px 0;
+  margin: 6px 0 10px 0;
 }
 .error-row.show {
   visibility: visible;
@@ -375,25 +386,17 @@ async function doReset() {
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
+
+  /* Logo+başlık ile form arası boşluk */
+  margin-top: clamp(20px, 5vh, 60px);
 }
 
+/* Satır ve başlık yüksekliklerini tek noktadan yönetelim */
 :root {
   --row-h: clamp(48px, 6.4vh, 56px);
-  --heading-h: clamp(28px, 4vh, 32px);
 }
 .field {
   display: block;
-}
-.heading-spacer {
-  height: var(--heading-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.reset-title {
-  font-weight: 600;
-  font-size: clamp(1rem, 1.6vw, 1.125rem);
-  text-align: center;
 }
 .field--reserve {
   height: var(--row-h);
@@ -405,6 +408,7 @@ async function doReset() {
   align-items: center;
 }
 
+/* Password slot animasyonu */
 .password-slot {
   opacity: 0;
   visibility: hidden;
@@ -415,7 +419,7 @@ async function doReset() {
   visibility: visible;
 }
 
-/* Inputlar */
+/* === Inputlar: yükseklik & hizalama tam eşit === */
 .form-control-xl {
   height: var(--row-h);
   font-size: clamp(0.95rem, 1.8vw, 1rem);
@@ -426,6 +430,20 @@ async function doReset() {
 .form-control-xl:focus {
   border-color: #7aa8ff;
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* input-with-action sarmalayıcısı ve iç input aynı yükseklikte dursun */
+.input-with-action,
+.input-with-action > .form-control-xl {
+  height: var(--row-h);
+  line-height: var(--row-h);
+  display: flex;
+  align-items: center;
+}
+
+/* Sağda ikon yokken de boşluk eşitlensin (reset ekranı) */
+.input-with-action > .form-control-xl {
+  padding-right: 44px; /* ikon alanı kadar */
 }
 
 /* Input içi ikon buton */
@@ -453,13 +471,13 @@ async function doReset() {
   color: #0d6efd;
 }
 
-/* ===== Aksiyon satırı: 20px yukarı ve hizalı ===== */
+/* ===== Reset aksiyonları ===== */
 .reset-actions {
-  margin-top: -20px; /* 20px yukarı taşı */
+  margin-top: -20px; /* e-mail satırına yaklaşsın */
   display: flex;
-  align-items: center; /* e-mail input yüksekliğiyle hizala */
+  align-items: center;
   justify-content: space-between; /* solda link, sağda buton */
-  min-height: var(--row-h); /* input satırıyla aynı yükseklik */
+  min-height: var(--row-h);
 }
 
 /* ===== ALT BLOK ===== */
@@ -499,6 +517,7 @@ async function doReset() {
   background-size: 0.7rem 0.7rem;
 }
 
+/* Linkler */
 .links {
   display: flex;
   gap: 16px;
@@ -535,9 +554,14 @@ async function doReset() {
     border-radius: 22px;
   }
   .logo-img {
-    width: min(280px, 82%);
+    width: min(200px, 82%);
+    margin-bottom: 8px;
+  }
+  .form-stack {
+    margin-top: clamp(18px, 5vh, 48px);
   }
 }
+
 @media (max-width: 380px) {
   .login-card {
     width: 94vw;
@@ -553,10 +577,12 @@ async function doReset() {
   .reset-actions {
     margin-top: -12px;
     min-height: 46px;
-  } /* çok küçük ekran ayarı */
+  }
 }
+
+/* Ek buton ayarı (gerekirse) */
 .send-reset-btn {
   padding: 8px 16px;
-  margin-left: 4px; /* hafif kaydırma */
+  margin-left: 4px;
 }
 </style>

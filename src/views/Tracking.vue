@@ -36,14 +36,14 @@
     <!-- Cards -->
     <div class="row gy-3">
       <div
-        class="col-12 col-md-12 col-xl-6 tracking-col"
+        class="col-12 col-md-12 col-xl-4 tracking-col"
         v-for="shipment in visibleShipments"
         :key="shipment.id"
       >
-        <div class="themed-card card shadow-sm border h-100">
+        <div class="themed-card card shadow-sm border h-80">
           <TrackingCard
             :shipment="shipment"
-            class="p-2 p-sm-3"
+            class="p-2 p-sm-4"
             @click="openDetail(shipment.id)"
           />
         </div>
@@ -80,23 +80,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import TrackingCard from "@/components/TrackingCard.vue";
 import OrderDetailPanel from "@/components/OrderDetailPanel.vue";
 
 const panelVisible = ref(false);
 const selectedShipmentId = ref<number | null>(null);
 
-const visibleCount = ref(5);
+/* Desktop algısı (Bootstrap xl >= 1200px) */
+const isDesktop = ref(false);
+const updateDesktop = () => (isDesktop.value = window.innerWidth >= 1200);
+
+/* Görünecek kart sayacı */
+const visibleCount = ref(0);
+const baseCount = () => (isDesktop.value ? 9 : 5);
+const stepCount = () => (isDesktop.value ? 6 : 5);
+
+/* Filtre */
 const filter = ref("");
 
 const setFilter = (status: string) => {
   filter.value = status;
-  visibleCount.value = 5;
+  visibleCount.value = baseCount();
 };
 
 const loadMore = () => {
-  visibleCount.value += 5;
+  visibleCount.value += stepCount();
 };
 
 const availableStatuses = [
@@ -126,6 +135,24 @@ function openDetail(id: number) {
   panelVisible.value = true;
 }
 
+/* Init / resize */
+onMounted(() => {
+  updateDesktop();
+  visibleCount.value = baseCount(); // başlangıç: 9 (desktop) / 5 (mobil)
+  window.addEventListener("resize", handleResize);
+});
+onBeforeUnmount(() => window.removeEventListener("resize", handleResize));
+
+function handleResize() {
+  const prevDesktop = isDesktop.value;
+  updateDesktop();
+  // breakpoint değiştiyse base'e resetle (UI tutarlı kalsın)
+  if (prevDesktop !== isDesktop.value) {
+    visibleCount.value = baseCount();
+  }
+}
+
+/* Mock data */
 const shipments = [
   {
     id: 1,
@@ -354,7 +381,7 @@ const shipments = [
   color: var(--bs-body-color);
 }
 
-/* Force the “Order Nº …” title to be visible even if component scoped styles set it dark */
+/* Force the title readable */
 .tracking-col :deep(.order-title),
 .tracking-col :deep(.card-title),
 .tracking-col :deep(.fw-semibold),
@@ -366,7 +393,7 @@ const shipments = [
   opacity: 1 !important;
 }
 
-/* Links inside the title */
+/* Links */
 .tracking-col :deep(a),
 .tracking-col :deep(a:hover),
 .tracking-col :deep(a:focus) {
@@ -374,20 +401,20 @@ const shipments = [
   text-decoration: none;
 }
 
-/* Muted text still readable in dark */
+/* Muted */
 .tracking-col :deep(.text-muted),
 .tracking-col :deep(.small.text-muted) {
   color: var(--bs-secondary-color) !important;
 }
 
-/* Normalize inner cards if any */
+/* Inner cards */
 .tracking-col :deep(.card) {
   background-color: var(--bs-body-bg) !important;
   border-color: var(--bs-border-color-translucent) !important;
   box-shadow: var(--bs-box-shadow-sm) !important;
 }
 
-/* Optional details */
+/* Details */
 .tracking-col :deep(hr) {
   border-color: var(--bs-border-color);
   opacity: 1;

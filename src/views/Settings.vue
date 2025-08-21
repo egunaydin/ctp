@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-2">
+  <div class="container-fluid py-2 px-3 px-md-4">
     <h2 class="fw-bold">Settings</h2>
     <p class="text-muted mb-4">Manage your account settings and preferences</p>
 
@@ -143,24 +143,53 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
+type TabKey = "general" | "profile" | "management" | "security";
 
 const route = useRoute();
 const router = useRouter();
 
-const currentTab = ref(route.query.tab || "general");
-watch(
-  () => route.query.tab,
-  (n) => (currentTab.value = n || "general")
+/** currentTab: union tipi ile netleştirildi */
+const currentTab = ref<TabKey>(
+  ((Array.isArray(route.query.tab)
+    ? route.query.tab[0]
+    : route.query.tab) as TabKey) || "general"
 );
 
-function setTab(tab) {
+/** url değiştikçe senkron tut */
+watch(
+  () => route.query.tab,
+  (n) => {
+    const v = (Array.isArray(n) ? n[0] : n) as TabKey | undefined;
+    currentTab.value = v ?? "general";
+  }
+);
+
+/** tab değiştirici */
+function setTab(tab: TabKey) {
   router.replace({ name: "settings", query: { tab } });
 }
 
-const form = ref({
+/** form / profile tipleri */
+interface CompanyForm {
+  company: string;
+  taxId: string;
+  email: string;
+  phone: string;
+  website: string;
+  address: string;
+}
+interface ProfileForm {
+  fullName: string;
+  title: string;
+  email: string;
+  phone: string;
+}
+
+const form = ref<CompanyForm>({
   company: "Alışan Logistics L.T.D.",
   taxId: "TAX123456789",
   email: "info@alisanlogistics.com",
@@ -170,9 +199,9 @@ const form = ref({
     "İçerenköy Mahallesi. Değirmen Yolu Cd. No:28, Asia Ofis Park A2 Blok K:1, 34752 Ataşehir/İstanbul",
 });
 
-const profile = ref({
+const profile = ref<ProfileForm>({
   fullName: "Ensar Günaydın",
-  title: "Yazilim Sefi",
+  title: "Yazılım Şefi",
   email: "Ensar.GUNAYDIN@alisanlogistics.com",
   phone: "+90 (530) 300 77 10",
 });
@@ -205,7 +234,7 @@ const profile = ref({
   color: var(--text, #212529);
 }
 
-/* Tema değişkenleri (OrderDetailPanel ile aynı) */
+/* Tema değişkenleri */
 :global([data-bs-theme="dark"]) {
   --accent: #4dabf7;
   --border: #3a3f44;

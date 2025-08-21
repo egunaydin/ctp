@@ -1,6 +1,6 @@
 <template>
   <div class="layout-wrap min-vh-90 py-4">
-    <div class="container">
+    <div class="container-fluid">
       <div class="rounded-4 shadow-sm p-3 position-relative layout-card">
         <!-- Masaüstü -->
         <div class="d-none d-md-flex">

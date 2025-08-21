@@ -1,22 +1,36 @@
 <template>
   <div class="orders-page container-fluid">
-    <!-- TOP TOOLBAR: Search + Filters -->
-    <div class="toolbar row g-2 align-items-center">
-      <div class="col-12 col-lg">
-        <div class="search-wrap">
-          <i class="bi bi-search"></i>
-          <input
-            v-model="search"
-            type="text"
-            class="form-control form-control-sm"
-            placeholder="Search by Nº, origin, destination…"
-          />
-        </div>
+    <!-- TOP TOOLBAR: Theme + Search (short) + Filters (wide) -->
+    <div class="toolbar d-flex flex-wrap align-items-center gap-2">
+      <!-- Dark / Light toggle (left) -->
+      <button
+        class="btn btn-dark btn-sm d-flex align-items-center gap-2 theme-btn"
+        @click="toggleTheme"
+        :aria-pressed="theme === 'dark'"
+        title="Toggle dark mode"
+      >
+        <i :class="theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill'"></i>
+        <span class="d-none d-sm-inline">
+          {{ theme === "dark" ? "Light" : "Dark" }}
+        </span>
+      </button>
+
+      <!-- Short search box -->
+      <div class="search-wrap" style="min-width: 220px; max-width: 320px">
+        <i class="bi bi-search"></i>
+        <input
+          v-model="search"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Search by Nº, origin, destination…"
+        />
       </div>
 
-      <div class="col-12 col-lg-auto d-flex gap-2 justify-content-end">
+      <!-- Right side: wide Filters button -->
+      <div class="ms-auto">
         <button
-          class="btn btn-outline-secondary btn-sm"
+          class="btn btn-outline-secondary btn-sm px-3"
+          style="min-width: 160px"
           @click="
             filtersVisible = !filtersVisible;
             nextTick(() => map?.invalidateSize());
@@ -25,49 +39,49 @@
           <i class="bi bi-funnel-fill me-1"></i> Filters
         </button>
       </div>
+    </div>
 
-      <!-- v-show: DOM’dan çıkarmadan görünürlüğü değiştir -->
-      <div v-show="filtersVisible" class="col-12">
-        <div class="row g-2">
-          <div class="col-sm-4 col-md-3">
-            <select v-model="filters.status" class="form-select form-select-sm">
-              <option value="">All Statuses</option>
-              <option>Shipping</option>
-              <option>Shipped</option>
-              <option>Planned</option>
-              <option>Canceled</option>
-              <option>Warning</option>
-            </select>
-          </div>
-          <div class="col-sm-4 col-md-3">
-            <select v-model="filters.type" class="form-select form-select-sm">
-              <option value="">All Types</option>
-              <option>DAP</option>
-              <option>DAT</option>
-              <option>CIP</option>
-            </select>
-          </div>
-          <div class="col-sm-4 col-md-3">
-            <input
-              v-model="filters.date"
-              type="date"
-              class="form-control form-control-sm"
-            />
-          </div>
-          <div class="col-md-3 d-flex gap-2">
-            <button
-              class="btn btn-light btn-sm flex-grow-1"
-              @click="clearFilters"
-            >
-              Clear
-            </button>
-          </div>
+    <!-- FILTERS AREA (keeps DOM; no redraw) -->
+    <div v-show="filtersVisible" class="col-12 mt-2">
+      <div class="row g-2">
+        <div class="col-sm-4 col-md-3">
+          <select v-model="filters.status" class="form-select form-select-sm">
+            <option value="">All Statuses</option>
+            <option>Shipping</option>
+            <option>Shipped</option>
+            <option>Planned</option>
+            <option>Canceled</option>
+            <option>Warning</option>
+          </select>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <select v-model="filters.type" class="form-select form-select-sm">
+            <option value="">All Types</option>
+            <option>DAP</option>
+            <option>DAT</option>
+            <option>CIP</option>
+          </select>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <input
+            v-model="filters.date"
+            type="date"
+            class="form-control form-control-sm"
+          />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button
+            class="btn btn-light btn-sm flex-grow-1"
+            @click="clearFilters"
+          >
+            Clear
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- KPI CARDS (compact) -->
-    <div class="row g-2 cards-row">
+    <!-- KPI CARDS -->
+    <div class="row g-2 cards-row mt-1">
       <div
         v-for="(card, i) in kpiCards"
         :key="i"
@@ -124,12 +138,10 @@
             </span>
           </div>
 
-          <!-- Üstte sadece özel ID -->
           <div class="dc-route mt-1 justify-between">
             <div class="id-badge">#{{ displayIdForSelected }}</div>
           </div>
 
-          <!-- ETA kutuları -->
           <div class="dc-eta">
             <div
               class="eta-item"
@@ -143,7 +155,6 @@
             </div>
           </div>
 
-          <!-- Bilgi bölümleri -->
           <div class="dc-list">
             <button
               class="list-row"
@@ -294,6 +305,20 @@ type OrderWithProgress = Order & { progress: number };
 
 /* helper */
 const tup = (lat: number, lng: number): LatLngTuple => [lat, lng];
+
+/* Dark/Light theme */
+const theme = ref<"light" | "dark">(
+  (document.documentElement.getAttribute("data-bs-theme") as
+    | "light"
+    | "dark") || "light"
+);
+function applyTheme() {
+  document.documentElement.setAttribute("data-bs-theme", theme.value);
+}
+function toggleTheme() {
+  theme.value = theme.value === "dark" ? "light" : "dark";
+  applyTheme();
+}
 
 /* ==== Points (Hadımköy→Eskişehir, Gebze→Adana) ==== */
 const TR: Record<string, LatLng> = {
@@ -640,6 +665,7 @@ function attachFocusBehavior(
   });
 }
 
+/* daha görünür çizim presetleri */
 async function drawAll() {
   if (!map) return;
   loading.value = true;
@@ -648,7 +674,6 @@ async function drawAll() {
   pathsByOrder.clear();
   const allBounds: LatLngTuple[] = [];
 
-  // Her status için görünürlük preset’i
   const styleMap: Record<
     Status,
     {
@@ -770,7 +795,6 @@ async function drawAll() {
         icon: icon("🏁"),
       }).addTo(overlay!);
 
-      // Etkileşim + öncelik
       attachFocusBehavior(o, pastLine, futureLine);
       [mOrigin, mDest].forEach((m) =>
         m.on("click", () => {
@@ -786,7 +810,6 @@ async function drawAll() {
 
       allBounds.push(...snapped);
     } catch {
-      // OSRM yoksa düz çiz
       const viPt = interpolatePoint(seq, o.progress);
 
       L.polyline([seq[0], viPt] as LatLngTuple[], {
@@ -845,6 +868,7 @@ async function drawAll() {
 }
 
 onMounted(async () => {
+  applyTheme();
   if (!mapEl.value) return;
   const osm = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -870,7 +894,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("resize", onResize);
 });
 
-/* Sadece görünür siparişler değişince çiz */
+/* sadece görünür siparişler değişince çiz */
 watch(visibleOrders, async () => {
   await nextTick();
   drawAll();
@@ -912,6 +936,13 @@ function zoomToSelected() {
 .cards-row {
   margin: 0;
 }
+
+/* Theme btn outline on light */
+.theme-btn {
+  border: 1px solid var(--bs-border-color);
+}
+
+/* Search */
 .search-wrap {
   position: relative;
 }

@@ -1,5 +1,7 @@
 <template>
-  <div class="login-wrap min-vh-100 d-flex align-items-center justify-content-center">
+  <div
+    class="login-wrap min-vh-100 d-flex align-items-center justify-content-center"
+  >
     <!-- Center card -->
     <div class="login-card shadow-apple">
       <div class="content-col">
@@ -11,40 +13,92 @@
 
           <!-- Big title under logo -->
           <div class="main-title">
-            <template v-if="mode === 'login'">Login With E-mail Identifier</template>
+            <template v-if="mode === 'login'"
+              >Login With E-mail Identifier</template
+            >
             <template v-else>Reset Your Password</template>
           </div>
 
           <!-- Shared error/info row -->
-          <div class="error-row" :class="{ show: !!error || !!resetInfo }" role="alert" aria-live="polite">
+          <div
+            class="error-row"
+            :class="{ show: !!error || !!resetInfo }"
+            role="alert"
+            aria-live="polite"
+          >
             {{ error || resetInfo }}
           </div>
 
           <!-- LOGIN FORM -->
-          <form v-if="mode === 'login'" @submit.prevent="doLogin" class="form-stack">
+          <form
+            v-if="mode === 'login'"
+            @submit.prevent="doLogin"
+            class="form-stack"
+          >
             <!-- E-mail -->
             <div class="field">
               <div class="input-with-action">
-                <input ref="emailInputEl" v-model.trim="email" type="email" class="form-control form-control-xl pe-5"
-                  placeholder="E-mail" autocomplete="username" required autofocus inputmode="email"
-                  @keyup.enter="verifyEmail" :disabled="checkingEmail || loggingIn || emailVerified" />
-                <button class="icon-btn" type="button" :disabled="!email || checkingEmail || loggingIn || emailVerified
-                  " @click="verifyEmail" aria-label="Verify e-mail" title="Verify e-mail">
-                  <span v-if="checkingEmail" class="spinner-border spinner-border-sm" />
+                <input
+                  ref="emailInputEl"
+                  v-model.trim="email"
+                  type="email"
+                  class="form-control form-control-xl pe-5"
+                  placeholder="E-mail"
+                  autocomplete="username"
+                  required
+                  autofocus
+                  inputmode="email"
+                  @keyup.enter="verifyEmail"
+                  :disabled="checkingEmail || loggingIn || emailVerified"
+                />
+                <button
+                  class="icon-btn"
+                  type="button"
+                  :disabled="
+                    !email || checkingEmail || loggingIn || emailVerified
+                  "
+                  @click="verifyEmail"
+                  aria-label="Verify e-mail"
+                  title="Verify e-mail"
+                >
+                  <span
+                    v-if="checkingEmail"
+                    class="spinner-border spinner-border-sm"
+                  />
                   <ArrowRight v-else :size="20" />
                 </button>
               </div>
             </div>
 
             <!-- Password (reveals after email is verified) -->
-            <div class="field field--reserve password-slot" :class="{ visible: emailVerified }">
+            <div
+              class="field field--reserve password-slot"
+              :class="{ visible: emailVerified }"
+            >
               <div class="input-with-action">
-                <input ref="passwordInputEl" v-model="password" type="password"
-                  class="form-control form-control-xl pe-5" placeholder="Password" autocomplete="current-password"
-                  required @keyup.enter="doLogin" :disabled="loggingIn || !emailVerified" />
-                <button class="icon-btn" type="button" :disabled="!password || loggingIn || !emailVerified"
-                  @click="doLogin" aria-label="Submit password" title="Submit password">
-                  <span v-if="loggingIn" class="spinner-border spinner-border-sm" />
+                <input
+                  ref="passwordInputEl"
+                  v-model="password"
+                  type="password"
+                  class="form-control form-control-xl pe-5"
+                  placeholder="Password"
+                  autocomplete="current-password"
+                  required
+                  @keyup.enter="doLogin"
+                  :disabled="loggingIn || !emailVerified"
+                />
+                <button
+                  class="icon-btn"
+                  type="button"
+                  :disabled="!password || loggingIn || !emailVerified"
+                  @click="doLogin"
+                  aria-label="Submit password"
+                  title="Submit password"
+                >
+                  <span
+                    v-if="loggingIn"
+                    class="spinner-border spinner-border-sm"
+                  />
                   <ArrowRight v-else :size="20" />
                 </button>
               </div>
@@ -55,9 +109,17 @@
           <form v-else @submit.prevent="doReset" class="form-stack">
             <div class="field">
               <div class="input-with-action">
-                <input ref="resetEmailInputEl" v-model.trim="resetEmail" type="email"
-                  class="form-control form-control-xl pe-5" placeholder="Enter your e-mail" autocomplete="username"
-                  required inputmode="email" :disabled="resetting" />
+                <input
+                  ref="resetEmailInputEl"
+                  v-model.trim="resetEmail"
+                  type="email"
+                  class="form-control form-control-xl pe-5"
+                  placeholder="Enter your e-mail"
+                  autocomplete="username"
+                  required
+                  inputmode="email"
+                  :disabled="resetting"
+                />
               </div>
             </div>
 
@@ -66,13 +128,26 @@
 
             <!-- Actions -->
             <div class="reset-actions">
-              <button type="button" class="btn btn-link p-0 link-btn" @click="switchToLogin" :disabled="resetting">
+              <button
+                type="button"
+                class="btn btn-link p-0 link-btn"
+                @click="switchToLogin"
+                :disabled="resetting"
+              >
                 ← Back to sign in
               </button>
 
-              <button type="submit" class="btn btn-primary" :disabled="!resetEmail || resetting"
-                aria-label="Send reset link" title="Send reset link">
-                <span v-if="resetting" class="spinner-border spinner-border-sm me-2" />
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="!resetEmail || resetting"
+                aria-label="Send reset link"
+                title="Send reset link"
+              >
+                <span
+                  v-if="resetting"
+                  class="spinner-border spinner-border-sm me-2"
+                />
                 Send reset link
               </button>
             </div>
@@ -82,7 +157,11 @@
         <!-- Bottom (extras) -->
         <div class="extras">
           <label class="stay d-inline-flex align-items-center gap-2">
-            <input type="checkbox" class="form-check-input" v-model="isStayConnected" />
+            <input
+              type="checkbox"
+              class="form-check-input"
+              v-model="isStayConnected"
+            />
             <span>Stay connected</span>
           </label>
 
@@ -112,7 +191,9 @@ const DEMO_PASS = "12345";
 
 const mode = ref<"login" | "reset">("login");
 
-const email = ref("");
+// >>> DEĞİŞİKLİK: email artık varsayılan olarak dolu geliyor
+const email = ref(DEMO_EMAIL);
+
 const password = ref("");
 const emailVerified = ref(false);
 
@@ -222,8 +303,10 @@ async function doReset() {
 /* ===== Global background: beyaz + çok hafif görsel ===== */
 .login-wrap {
   background-color: #fff;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.88),
-      rgba(255, 255, 255, 0.88)),
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.88),
+      rgba(255, 255, 255, 0.88)
+    ),
     url("@/assets/1 1.jpg");
   background-size: cover;
   background-position: center;
@@ -361,7 +444,7 @@ async function doReset() {
 
 /* input-with-action sarmalayıcısı ve iç input aynı yükseklikte dursun */
 .input-with-action,
-.input-with-action>.form-control-xl {
+.input-with-action > .form-control-xl {
   height: var(--row-h);
   line-height: var(--row-h);
   display: flex;
@@ -369,7 +452,7 @@ async function doReset() {
 }
 
 /* Sağda ikon yokken de boşluk eşitlensin (reset ekranı) */
-.input-with-action>.form-control-xl {
+.input-with-action > .form-control-xl {
   padding-right: 44px;
   /* ikon alanı kadar */
 }

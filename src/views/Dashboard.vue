@@ -1,22 +1,9 @@
 <template>
   <div class="orders-page container-fluid">
-    <!-- TOP TOOLBAR: Theme + Search (short) + Filters (wide) -->
-    <div class="toolbar d-flex flex-wrap align-items-center gap-2">
-      <!-- Dark / Light toggle (left) -->
-      <button
-        class="btn btn-dark btn-sm d-flex align-items-center gap-2 theme-btn"
-        @click="toggleTheme"
-        :aria-pressed="theme === 'dark'"
-        title="Toggle dark mode"
-      >
-        <i :class="theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill'"></i>
-        <span class="d-none d-sm-inline">
-          {{ theme === "dark" ? "Light" : "Dark" }}
-        </span>
-      </button>
-
-      <!-- Short search box -->
-      <div class="search-wrap" style="min-width: 220px; max-width: 320px">
+    <!-- TOP TOOLBAR: Search (long) + Theme (square) + Filters (short) -->
+    <div class="toolbar d-flex align-items-center">
+      <!-- Search -->
+      <div class="search-wrap me-3" style="flex: 0 0 280px">
         <i class="bi bi-search"></i>
         <input
           v-model="search"
@@ -26,11 +13,22 @@
         />
       </div>
 
-      <!-- Right side: wide Filters button -->
-      <div class="ms-auto">
+      <!-- Sağ grup: filtre + tema -->
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <!-- Theme toggle -->
+        <button
+          class="btn btn-outline-secondary square-btn"
+          @click="toggleTheme"
+          :aria-pressed="theme === 'dark'"
+          aria-label="Toggle dark mode"
+        >
+          <Sun v-if="theme !== 'dark'" :size="18" />
+          <Moon v-else :size="18" />
+        </button>
+        <!-- Filters -->
         <button
           class="btn btn-outline-secondary btn-sm px-3"
-          style="min-width: 160px"
+          style="min-width: 140px"
           @click="
             filtersVisible = !filtersVisible;
             nextTick(() => map?.invalidateSize());
@@ -80,7 +78,7 @@
       </div>
     </div>
 
-    <!-- KPI CARDS -->
+    <!-- KPI CARDS (compact) -->
     <div class="row g-2 cards-row mt-1">
       <div
         v-for="(card, i) in kpiCards"
@@ -138,10 +136,12 @@
             </span>
           </div>
 
+          <!-- Üstte sadece özel ID -->
           <div class="dc-route mt-1 justify-between">
             <div class="id-badge">#{{ displayIdForSelected }}</div>
           </div>
 
+          <!-- ETA kutuları -->
           <div class="dc-eta">
             <div
               class="eta-item"
@@ -155,6 +155,7 @@
             </div>
           </div>
 
+          <!-- Bilgi bölümleri -->
           <div class="dc-list">
             <button
               class="list-row"
@@ -281,7 +282,7 @@ import {
 } from "vue";
 import L from "leaflet";
 import type { LatLngTuple } from "leaflet";
-import { X } from "lucide-vue-next";
+import { X, Sun, Moon } from "lucide-vue-next";
 
 /* ==== Types ==== */
 type LatLng = { lat: number; lng: number };
@@ -308,15 +309,18 @@ const tup = (lat: number, lng: number): LatLngTuple => [lat, lng];
 
 /* Dark/Light theme */
 const theme = ref<"light" | "dark">(
-  (document.documentElement.getAttribute("data-bs-theme") as
-    | "light"
-    | "dark") || "light"
+  (localStorage.getItem("theme") as "light" | "dark") ||
+    (document.documentElement.getAttribute("data-bs-theme") as
+      | "light"
+      | "dark") ||
+    "light"
 );
 function applyTheme() {
   document.documentElement.setAttribute("data-bs-theme", theme.value);
 }
 function toggleTheme() {
   theme.value = theme.value === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", theme.value);
   applyTheme();
 }
 
@@ -937,14 +941,12 @@ function zoomToSelected() {
   margin: 0;
 }
 
-/* Theme btn outline on light */
-.theme-btn {
-  border: 1px solid var(--bs-border-color);
-}
-
-/* Search */
+/* Search (longer) */
 .search-wrap {
   position: relative;
+  width: 100%;
+  max-width: 600px;
+  min-width: 675px;
 }
 .search-wrap i {
   position: absolute;
@@ -955,6 +957,16 @@ function zoomToSelected() {
 }
 .search-wrap .form-control {
   padding-left: 34px;
+}
+
+/* Square theme button */
+.square-btn {
+  height: 36px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--bs-border-color);
 }
 
 /* KPI */
@@ -1025,13 +1037,14 @@ function zoomToSelected() {
   top: 50%;
   transform: translateY(-50%);
   width: clamp(320px, 32vw, 440px);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--surface, rgba(255, 255, 255, 0.96));
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.08));
   border-radius: 14px;
-  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.18);
+  box-shadow: 0 14px 30px var(--shadow-elev, rgba(16, 24, 40, 0.18));
   z-index: 1040;
   padding: 12px;
+  color: var(--text-strong, #0f172a);
 }
 .dc-head {
   display: flex;
@@ -1059,10 +1072,11 @@ function zoomToSelected() {
 .id-badge {
   font-weight: 800;
   letter-spacing: 0.4px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.08));
   border-radius: 999px;
   padding: 4px 10px;
-  background: #f8fafc;
+  background: var(--surface-2, #f8fafc);
+  color: var(--text-strong, #0f172a);
 }
 
 /* Pill */
@@ -1092,14 +1106,14 @@ function zoomToSelected() {
   padding-top: 8px;
 }
 .eta-item {
-  background: #f8fafc;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--surface-2, #f8fafc);
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.05));
   border-radius: 10px;
   padding: 8px;
 }
 .eta-title {
   font-size: 0.72rem;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
 }
 .eta-date {
   font-weight: 700;
@@ -1110,8 +1124,8 @@ function zoomToSelected() {
 }
 .list-row {
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: #fff;
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.08));
+  background: var(--surface, #fff);
   border-radius: 10px;
   padding: 10px 12px;
   margin-top: 8px;
@@ -1119,12 +1133,13 @@ function zoomToSelected() {
   align-items: center;
   justify-content: space-between;
   font-size: 0.9rem;
+  color: var(--text-strong, #0f172a);
 }
 .list-row:hover {
-  background: #f8fafc;
+  background: var(--surface-2, #f8fafc);
 }
 .section {
-  border: 1px dashed var(--bs-border-color);
+  border: 1px dashed var(--border-weak, var(--bs-border-color));
   border-radius: 10px;
   padding: 10px;
   margin-top: 8px;
@@ -1137,7 +1152,7 @@ function zoomToSelected() {
 }
 .kv dt {
   font-size: 0.78rem;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-weight: 600;
 }
 .kv dd {
@@ -1192,5 +1207,29 @@ function zoomToSelected() {
 .pop-enter-active,
 .pop-leave-active {
   transition: all 0.15s ease;
+}
+
+/* ==== Dark theme vars ==== */
+:root[data-bs-theme="dark"] {
+  --surface: rgba(33, 37, 41, 0.92);
+  --surface-2: rgba(45, 49, 58, 0.6);
+  --border-weak: rgba(255, 255, 255, 0.14);
+  --text-strong: #e9ecef;
+  --text-muted: #94a3b8;
+  --shadow-elev: rgba(0, 0, 0, 0.42);
+}
+
+/* KPI overrides for dark */
+:root[data-bs-theme="dark"] .card.metric {
+  background: var(--surface);
+  border-color: var(--border-weak);
+  box-shadow: 0 10px 20px var(--shadow-elev);
+}
+:root[data-bs-theme="dark"] .metric-title,
+:root[data-bs-theme="dark"] .metric-sub {
+  color: var(--text-muted);
+}
+:root[data-bs-theme="dark"] .mini-bars span {
+  background: rgba(13, 110, 253, 0.45);
 }
 </style>

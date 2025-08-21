@@ -1037,13 +1037,14 @@ function zoomToSelected() {
   top: 50%;
   transform: translateY(-50%);
   width: clamp(320px, 32vw, 440px);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--surface, rgba(255, 255, 255, 0.96));
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.08));
   border-radius: 14px;
-  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.18);
+  box-shadow: 0 14px 30px var(--shadow-elev, rgba(16, 24, 40, 0.18));
   z-index: 1040;
   padding: 12px;
+  color: var(--text-strong, #0f172a);
 }
 .dc-head {
   display: flex;
@@ -1071,10 +1072,11 @@ function zoomToSelected() {
 .id-badge {
   font-weight: 800;
   letter-spacing: 0.4px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.08));
   border-radius: 999px;
   padding: 4px 10px;
-  background: #f8fafc;
+  background: var(--surface-2, #f8fafc);
+  color: var(--text-strong, #0f172a);
 }
 
 /* Pill */
@@ -1104,14 +1106,14 @@ function zoomToSelected() {
   padding-top: 8px;
 }
 .eta-item {
-  background: #f8fafc;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--surface-2, #f8fafc);
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.05));
   border-radius: 10px;
   padding: 8px;
 }
 .eta-title {
   font-size: 0.72rem;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
 }
 .eta-date {
   font-weight: 700;
@@ -1122,8 +1124,8 @@ function zoomToSelected() {
 }
 .list-row {
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: #fff;
+  border: 1px solid var(--border-weak, rgba(0, 0, 0, 0.08));
+  background: var(--surface, #fff);
   border-radius: 10px;
   padding: 10px 12px;
   margin-top: 8px;
@@ -1131,12 +1133,13 @@ function zoomToSelected() {
   align-items: center;
   justify-content: space-between;
   font-size: 0.9rem;
+  color: var(--text-strong, #0f172a);
 }
 .list-row:hover {
-  background: #f8fafc;
+  background: var(--surface-2, #f8fafc);
 }
 .section {
-  border: 1px dashed var(--bs-border-color);
+  border: 1px dashed var(--border-weak, var(--bs-border-color));
   border-radius: 10px;
   padding: 10px;
   margin-top: 8px;
@@ -1149,7 +1152,7 @@ function zoomToSelected() {
 }
 .kv dt {
   font-size: 0.78rem;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-weight: 600;
 }
 .kv dd {
@@ -1204,5 +1207,29 @@ function zoomToSelected() {
 .pop-enter-active,
 .pop-leave-active {
   transition: all 0.15s ease;
+}
+
+/* ==== Dark theme vars ==== */
+:root[data-bs-theme="dark"] {
+  --surface: rgba(33, 37, 41, 0.92);
+  --surface-2: rgba(45, 49, 58, 0.6);
+  --border-weak: rgba(255, 255, 255, 0.14);
+  --text-strong: #e9ecef;
+  --text-muted: #94a3b8;
+  --shadow-elev: rgba(0, 0, 0, 0.42);
+}
+
+/* KPI overrides for dark */
+:root[data-bs-theme="dark"] .card.metric {
+  background: var(--surface);
+  border-color: var(--border-weak);
+  box-shadow: 0 10px 20px var(--shadow-elev);
+}
+:root[data-bs-theme="dark"] .metric-title,
+:root[data-bs-theme="dark"] .metric-sub {
+  color: var(--text-muted);
+}
+:root[data-bs-theme="dark"] .mini-bars span {
+  background: rgba(13, 110, 253, 0.45);
 }
 </style>

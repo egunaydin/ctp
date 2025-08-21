@@ -28,11 +28,17 @@
         <!-- Mobil Sidebar -->
         <div v-if="showMobileMenu" class="mobile-sidebar-wrapper">
           <!-- Overlay -->
-          <div class="mobile-sidebar-overlay" @click="showMobileMenu = false"></div>
+          <div
+            class="mobile-sidebar-overlay"
+            @click="showMobileMenu = false"
+          ></div>
 
           <!-- Sidebar Panel -->
           <div class="mobile-sidebar-panel">
-            <Sidebar :isMenuOpen="showMobileMenu" @closeSidebar="showMobileMenu = false" />
+            <Sidebar
+              :isMenuOpen="showMobileMenu"
+              @closeSidebar="showMobileMenu = false"
+            />
           </div>
         </div>
       </div>
@@ -56,12 +62,16 @@ const isDashboard = computed(() => route.name === "dashboard");
 <style scoped>
 .layout-wrap {
   --bg: var(--bs-body-bg);
-  background: radial-gradient(1200px 600px at 10% 5%,
+  background: radial-gradient(
+      1200px 600px at 10% 5%,
       rgba(13, 109, 253, 0.18),
-      transparent 60%),
-    radial-gradient(900px 600px at 90% 105%,
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 600px at 90% 105%,
       rgba(111, 66, 193, 0.18),
-      transparent 60%),
+      transparent 60%
+    ),
     var(--bg);
   padding: 24px;
 }

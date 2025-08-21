@@ -15,16 +15,6 @@
 
       <!-- Sağ grup: filtre + tema -->
       <div class="d-flex align-items-center gap-2 ms-auto">
-        <!-- Theme toggle -->
-        <button
-          class="btn btn-outline-secondary square-btn"
-          @click="toggleTheme"
-          :aria-pressed="theme === 'dark'"
-          aria-label="Toggle dark mode"
-        >
-          <Sun v-if="theme !== 'dark'" :size="18" />
-          <Moon v-else :size="18" />
-        </button>
         <!-- Filters -->
         <button
           class="btn btn-outline-secondary btn-sm px-3"
@@ -35,6 +25,16 @@
           "
         >
           <i class="bi bi-funnel-fill me-1"></i> Filters
+        </button>
+        <!-- Theme toggle -->
+        <button
+          class="btn btn-outline-secondary square-btn"
+          @click="toggleTheme"
+          :aria-pressed="theme === 'dark'"
+          aria-label="Toggle dark mode"
+        >
+          <Sun v-if="theme !== 'dark'" :size="18" />
+          <Moon v-else :size="18" />
         </button>
       </div>
     </div>
